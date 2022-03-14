@@ -12,11 +12,26 @@ initLState = LState []
 -- that name and value added.
 -- If it already exists, remove the old value
 updateVars :: Name -> Int -> [(Name, Int)] -> [(Name, Int)]
-updateVars = undefined
+updateVars name value list= do
+                                   if (contains name list)
+                                        then do 
+                                              dropVar name list
+                                              return (list ++ [(name, value)])
+                                   else return (list ++ [(name, value)])
+
+
+
+contains :: Name ->  [(Name, Int)] -> Bool
+contains name list = length (filter (\a -> fst(a) == name ) (list)) > 0
+
 
 -- Return a new set of variables with the given name removed
 dropVar :: Name -> [(Name, Int)] -> [(Name, Int)]
-dropVar = undefined
+dropVar name list = return (filter (\a -> fst(a) /= name) list)
+
+
+
+
 
 process :: LState -> Command -> IO ()
 process st (Set var e) 
@@ -41,3 +56,5 @@ repl st = do putStr ("> ")
                           process st cmd
                   _ -> do putStrLn "Parse error"
                           repl st
+
+                    
