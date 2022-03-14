@@ -11,8 +11,8 @@ initLState = LState []
 -- Given a variable name and a value, return a new set of variables with
 -- that name and value added.
 -- If it already exists, remove the old value
-updateVars :: Name -> Int -> [(Name, Int)] -> [(Name, Int)]
-updateVars name value list= do
+updateVars :: Name -> Int -> [(Name, Int)] -> [[(Name, Int)]]
+updateVars name value list = do
                                    if (contains name list)
                                         then do 
                                               dropVar name list
@@ -26,7 +26,7 @@ contains name list = length (filter (\a -> fst(a) == name ) (list)) > 0
 
 
 -- Return a new set of variables with the given name removed
-dropVar :: Name -> [(Name, Int)] -> [(Name, Int)]
+dropVar :: Name -> [(Name, Int)] -> [[(Name, Int)]]
 dropVar name list = return (filter (\a -> fst(a) /= name) list)
 
 
