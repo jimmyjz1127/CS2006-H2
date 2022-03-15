@@ -5,6 +5,7 @@ import Parsing
 
 data LState = LState { vars :: [(Name, Value)] }
 
+
 initLState :: LState
 initLState = LState []
 
@@ -19,43 +20,48 @@ updateVars name value st = do
                                         let currentList = vars st
                                         tempState {vars = currentList ++ [(name, value)]}
                               else do
-                                   let currentList = vars st
-                                   st {vars = currentList ++ [(name, value)]}
+                                        let currentList = vars st
+                                        st {vars = currentList ++ [(name, value)]}
 
 
 
 contains :: Name ->  LState -> Bool
 contains name st = length (filter (\a -> fst(a) == name ) (vars st)) > 0
 
-getValue :: Name ->  LState -> Value
-getValue name st = snd (head(filter (\a -> fst(a) == name ) (vars st)))
+getValue :: String ->  LState -> Value
+getValue name st = snd(head(filter (\a -> fst(a) == name ) (vars st)))
 
 -- Return a new set of variables with the given name removed
 dropVar :: Name -> LState -> LState
 dropVar name st = do
                     let tempList = (filter (\a -> fst(a) /= name) (vars st))
-                    st {vars = tempList}
+                    st{vars = tempList}
+
+
+
 
 
 process :: LState -> Command -> IO ()
 process st (Set name e) =
-          case (eval (vars st) e) of
-               Just val -> repl (updateVars name val st)
-               Nothing  -> repl st
-          -- st' should include the variable set to the result of evaluating e
+  case (eval (vars st) e) of
+    Just val -> repl (updateVars name val st)
+    Nothing  -> repl st
+  -- st' should include the variable set to the result of evaluating e
 process st (Print e) =
-     do
-          case (eval (vars st) e) of
-               Just (IntVal val) -> putStrLn("test1")
-               Just (StrVal val) -> putStrLn("test2")
-               Just (CharVal val) -> putStrLn("test3")
-               Just (VarVal var) -> case (getValue var st) of
-                    (IntVal val) -> putStrLn(show val)
-                    (CharVal val) -> putStrLn(show val)
-                    (StrVal val) -> putStrLn(val)
-               Nothing -> putStrLn("test5")
-          repl st
+    do
+      case (eval (vars st) e) of
+            -- Just (NameVal name) -> putStrLn(show (getValue name st))
+            Just (IntVal val)  -> putStrLn(show val)
+            Just (StrVal val)  -> putStrLn(val)
+            Just (CharVal val) -> putStrLn(show val)
+            Just (VarVal var)  -> case (getValue var st) of
+                 (IntVal val)  -> putStrLn(show val)
+                 (CharVal val) -> putStrLn(show val)
+                 (StrVal val)  -> putStrLn(val)
+            Nothing -> putStrLn("")
+      repl st
 process st (Quit) = putStrLn("Quitting Program...")
+
 
 
 -- Read, Eval, Print Loop

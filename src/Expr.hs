@@ -7,6 +7,9 @@ type Name = String
 -- At first, 'Expr' contains only addition, conversion to strings, and integer
 -- values. You will need to add other operations, and variables
 data Expr = Add Expr Expr
+          | Subtract Expr Expr
+          | Mul Expr Expr
+          | Div Expr Expr
           | ToString Expr
           | Val Value
   deriving Show
@@ -17,14 +20,33 @@ data Command = Set Name Expr -- assign an expression to a variable name
              | Quit
   deriving Show
 
+
 data Value = IntVal Int | StrVal String | CharVal Char | VarVal Name
   deriving Show
+
+
+setVar :: Name -> Expr -> Command
+setVar name value = Set name value
+
+
 
 eval :: [(Name, Value)] -> -- Variable name to value mapping
         Expr -> -- Expression to evaluate
         Maybe Value -- Result (if no errors such as missing variables)
-eval vars (Val x) = Just x  -- for values, just give the value directly
-eval vars (Add x y) = Nothing -- return an error (because it's not implemented yet!)
+eval vars (Val x) = Just x -- for values, just give the value directly
+eval vars (Add x y) = do
+                        let var1 = eval vars x
+                        let var2 = eval vars y
+
+                        case (var1, var2) of
+                             (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a + b))
+
+
+
+
+eval vars (Subtract x y) = Nothing
+eval vars (Mul x y) = Nothing
+eval vars (Div x y) = Nothing
 eval vars (ToString x) = Nothing
 
 digitToInt :: Char -> Value
@@ -39,8 +61,8 @@ pCommand = do t <- letter
                    space
                    e <- pExpr
                    return (Print e)
-                 ||| do string "quit"
-                        return (Quit)
+                   ||| do string "quit"
+                          return (Quit)
 
 pExpr :: Parser Expr
 pExpr = do t <- pTerm
