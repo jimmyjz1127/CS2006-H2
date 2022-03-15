@@ -120,10 +120,6 @@ pExpr = do t <- pTerm
 --              return (Val (digitToInt d))
 --            ||| do v <- letter
 --                   return (Val (VarVal [v]))
-<<<<<<< HEAD
---                 ||| do char '('
-=======
->>>>>>> master
 --                        e <- pExpr
 --                        char ')'
 --                        return e
@@ -137,17 +133,10 @@ pFactor = do d <- natural
                        e <- pExpr
                        char '\"'
                        return e
-<<<<<<< HEAD
-                      ||| do char '('
-                             e <- pExpr
-                             char ')'
-                             return e
-=======
                      ||| do char '('
                             e <- pExpr
                             char ')'
                             return e
->>>>>>> master
 
 pTerm :: Parser Expr
 pTerm = do f <- pFactor
