@@ -74,15 +74,29 @@ pExpr = do t <- pTerm
                    error "Subtraction not yet implemented!"
                  ||| return t
 
+-- pFactor :: Parser Expr
+-- pFactor = do d <- digit
+--              return (Val (digitToInt d))
+--            ||| do v <- letter
+--                   return (Val (VarVal [v]))
+--                 ||| do char '('
+--                        e <- pExpr
+--                        char ')'
+--                        return e
+
 pFactor :: Parser Expr
 pFactor = do d <- digit
              return (Val (digitToInt d))
-           ||| do v <- letter
-                  return (Val (VarVal [v]))
-                ||| do char '('
+           ||| do v <- identifier
+                  return (Val (VarVal v))
+                ||| do char '\"'
                        e <- pExpr
-                       char ')'
+                       char '\"'
                        return e
+                      ||| do char '('
+                             e <- pExpr
+                             char ')'
+                             return e
 
 pTerm :: Parser Expr
 pTerm = do f <- pFactor
