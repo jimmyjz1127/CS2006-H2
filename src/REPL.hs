@@ -62,11 +62,6 @@ process st (Print e) =
       repl st
 process st (Quit) = putStrLn("Quitting Program...")
 
-               -- Just (Add )
-
-          -- Print the result of evaluation
-          repl st'
-
 
 
 -- Read, Eval, Print Loop

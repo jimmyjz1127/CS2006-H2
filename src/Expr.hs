@@ -34,9 +34,9 @@ eval :: [(Name, Value)] -> -- Variable name to value mapping
         Expr -> -- Expression to evaluate
         Maybe Value -- Result (if no errors such as missing variables)
 eval vars (Val x) = Just x -- for values, just give the value directly
-eval vars (Add x y) = do
-                        let var1 = eval vars x
-                        let var2 = eval vars y
+-- eval vars (Add x y) = do
+--                         let var1 = eval vars x
+--                         let var2 = eval vars y
 
 
 
