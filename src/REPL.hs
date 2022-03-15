@@ -46,7 +46,6 @@ process st (Set name e) =
 process st (Print e) =
      do
           case (eval (vars st) e) of
-               -- Just (NameVal name) -> putStrLn(show (getValue name st))
                Just (IntVal val) -> putStrLn("test1")
                Just (StrVal val) -> putStrLn("test2")
                Just (CharVal val) -> putStrLn("test3")
@@ -56,6 +55,8 @@ process st (Print e) =
                     (StrVal val) -> putStrLn(val)
                Nothing -> putStrLn("test5")
           repl st
+process st (Quit) = putStrLn("Quitting Program...")
+
 
 -- Read, Eval, Print Loop
 -- This reads and parses the input using the pCommand parser, and calls
