@@ -51,14 +51,14 @@ process st (Print e) =
     do
       case (eval (vars st) e) of
             -- Just (NameVal name) -> putStrLn(show (getValue name st))
-            Just (IntVal val)  -> putStrLn("test1")
-            Just (StrVal val)  -> putStrLn("test2")
-            Just (CharVal val) -> putStrLn("test3")
+            Just (IntVal val)  -> putStrLn(show val)
+            Just (StrVal val)  -> putStrLn(val)
+            Just (CharVal val) -> putStrLn(show val)
             Just (VarVal var)  -> case (getValue var st) of
                  (IntVal val)  -> putStrLn(show val)
                  (CharVal val) -> putStrLn(show val)
                  (StrVal val)  -> putStrLn(val)
-            Nothing -> putStrLn("test5")
+            Nothing -> putStrLn("")
       repl st
 process st (Quit) = putStrLn("Quitting Program...")
 

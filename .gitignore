@@ -1,3 +1,6 @@
 
 src/test.hs
 src/.vscode/tasks.json
+src/*.hi
+src/calc
+src/*.o
