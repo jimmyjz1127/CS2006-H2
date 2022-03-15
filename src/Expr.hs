@@ -12,6 +12,7 @@ data Expr = Add Expr Expr
           | Div Expr Expr
           | ToString Expr
           | Pow Expr Expr
+          -- | ABS Expr
           | Val Value
 
   deriving Show
@@ -42,7 +43,7 @@ eval vars (Add x y) = do
 
                         case (var1, var2) of
                              (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a + b))
-
+                             Nothing                            -> Just (StrVal ("error"))
 
 
 
@@ -54,6 +55,7 @@ eval vars (Subtract x y) = do
 
                              case (var1, var2) of
                                (Just (IntVal val1), Just (IntVal val2)) -> Just (IntVal (val1 - val2))
+                               Nothing                                  -> Just (StrVal ("error"))
 
 
 eval vars (Mul x y) = do
@@ -62,6 +64,7 @@ eval vars (Mul x y) = do
 
                         case (var1, var2) of
                           (Just (IntVal val1), Just (IntVal val2)) -> Just (IntVal (val1 * val2))
+                          Nothing                                  -> Just (StrVal ("error"))
 
 
 eval vars (Div x y) = do
@@ -74,6 +77,7 @@ eval vars (Div x y) = do
                                                                                 let result = val1 `div` val2
                                                                                 Just (IntVal (result))
                                                                       else Just (StrVal ("Div by 0 error"))
+                          Nothing                                  -> Just (StrVal ("error"))
 
 
 eval vars (Pow x y) = do
@@ -82,13 +86,23 @@ eval vars (Pow x y) = do
 
                         case (var1, var2) of
                           (Just (IntVal val1), Just (IntVal val2)) -> Just (IntVal (val1^val2))
+                          Nothing                                  -> Just (StrVal ("error"))
 
+-- eval vars (ABS x) = do
+--                         let var1 = eval vars x
+--
+--                         case var1 of
+--                           Just (IntVal val1) -> if val1 < 0
+--                                                   then Just (IntVal (-val1))
+--                                                 else Just(IntVal (val1))
 
 
 
 
 
 eval vars (ToString x) = Nothing
+
+
 
 digitToInt :: Char -> Value
 digitToInt x = IntVal (fromEnum x - fromEnum '0')
@@ -105,6 +119,7 @@ pCommand = do t <- ident
                    ||| do string "quit"
                           return (Quit)
 
+
 pExpr :: Parser Expr
 pExpr = do t <- pTerm
            do char '+'
@@ -113,7 +128,14 @@ pExpr = do t <- pTerm
             ||| do char '-'
                    e <- pExpr
                    return (Subtract t e)
-                 ||| return t
+                   ||| return t
+                   -- ||| do string "abs"
+                   --        char '('
+                   --        e <- pExpr
+                   --        char ')'
+                   --        return (ABS e)
+
+
 
 -- pFactor :: Parser Expr
 -- pFactor = do d <- digit
