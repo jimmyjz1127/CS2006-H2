@@ -53,10 +53,10 @@ digitToInt :: Char -> Value
 digitToInt x = IntVal (fromEnum x - fromEnum '0')
 
 pCommand :: Parser Command
-pCommand = do t <- letter
+pCommand = do t <- ident
               char '='
               e <- pExpr
-              return (Set [t] e)
+              return (Set t e)
             ||| do string "print"
                    space
                    e <- pExpr
@@ -85,8 +85,8 @@ pExpr = do t <- pTerm
 --                        return e
 
 pFactor :: Parser Expr
-pFactor = do d <- digit
-             return (Val (digitToInt d))
+pFactor = do d <- natural
+             return (Val (IntVal d))
            ||| do v <- identifier
                   return (Val (VarVal v))
                 ||| do char '\"'
