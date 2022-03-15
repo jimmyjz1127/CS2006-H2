@@ -17,8 +17,8 @@ updateVars name value st = do
                               if (contains name st)
                                    then do
                                         let tempState = dropVar name st
-                                        let currentList = vars st
-                                        tempState {vars = currentList ++ [(name, value)]}
+                                        let currentList = (vars tempState) ++ [(name, value)]
+                                        tempState {vars = currentList}
                               else do
                                         let currentList = vars st
                                         st {vars = currentList ++ [(name, value)]}
