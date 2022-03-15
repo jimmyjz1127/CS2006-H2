@@ -3,7 +3,7 @@ module REPL where
 import Expr
 import Parsing
 
-data LState = LState { vars :: [(Name, Int)] }
+data LState = LState { vars :: [(Name, Value)] }
 
 initLState :: LState
 initLState = LState []
@@ -11,22 +11,51 @@ initLState = LState []
 -- Given a variable name and a value, return a new set of variables with
 -- that name and value added.
 -- If it already exists, remove the old value
-updateVars :: Name -> Int -> [(Name, Int)] -> [(Name, Int)]
-updateVars = undefined
+updateVars :: Name -> Value -> LState -> LState
+updateVars name value st = do
+                              if (contains name st)
+                                   then do
+                                        let tempState = dropVar name st
+                                        let currentList = vars st
+                                        tempState {vars = currentList ++ [(name, value)]}
+                              else do
+                                   let currentList = vars st
+                                   st {vars = currentList ++ [(name, value)]}
+
+
+
+contains :: Name ->  LState -> Bool
+contains name st = length (filter (\a -> fst(a) == name ) (vars st)) > 0
+
+getValue :: Name ->  LState -> Value
+getValue name st = snd (head(filter (\a -> fst(a) == name ) (vars st)))
 
 -- Return a new set of variables with the given name removed
-dropVar :: Name -> [(Name, Int)] -> [(Name, Int)]
-dropVar = undefined
+dropVar :: Name -> LState -> LState
+dropVar name st = do
+                    let tempList = (filter (\a -> fst(a) /= name) (vars st))
+                    st {vars = tempList}
+
 
 process :: LState -> Command -> IO ()
-process st (Set var e) 
-     = do let st' = undefined
+process st (Set name e) =
+          case (eval (vars st) e) of
+               Just val -> repl (updateVars name val st)
+               Nothing  -> repl st
           -- st' should include the variable set to the result of evaluating e
-          repl st'
-process st (Print e) 
-     = do let st' = undefined
-          -- Print the result of evaluation
-          repl st'
+process st (Print e) =
+     do
+          case (eval (vars st) e) of
+               -- Just (NameVal name) -> putStrLn(show (getValue name st))
+               Just (IntVal val) -> putStrLn("test1")
+               Just (StrVal val) -> putStrLn("test2")
+               Just (CharVal val) -> putStrLn("test3")
+               Just (VarVal var) -> case (getValue var st) of
+                    (IntVal val) -> putStrLn(show val)
+                    (CharVal val) -> putStrLn(show val)
+                    (StrVal val) -> putStrLn(val)
+               Nothing -> putStrLn("test5")
+          repl st
 
 -- Read, Eval, Print Loop
 -- This reads and parses the input using the pCommand parser, and calls
