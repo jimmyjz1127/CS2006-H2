@@ -11,7 +11,9 @@ data Expr = Add Expr Expr
           | Mul Expr Expr
           | Div Expr Expr
           | ToString Expr
+          | Pow Expr Expr
           | Val Value
+
   deriving Show
 
 -- These are the REPL commands
@@ -44,9 +46,48 @@ eval vars (Add x y) = do
 
 
 
-eval vars (Subtract x y) = Nothing
-eval vars (Mul x y) = Nothing
-eval vars (Div x y) = Nothing
+
+
+eval vars (Subtract x y) = do
+                             let var1 = eval vars x
+                             let var2 = eval vars y
+
+                             case (var1, var2) of
+                               (Just (IntVal val1), Just (IntVal val2)) -> Just (IntVal (val1 - val2))
+
+
+eval vars (Mul x y) = do
+                        let var1 = eval vars x
+                        let var2 = eval vars y
+
+                        case (var1, var2) of
+                          (Just (IntVal val1), Just (IntVal val2)) -> Just (IntVal (val1 * val2))
+
+
+eval vars (Div x y) = do
+                        let var1 = eval vars x
+                        let var2 = eval vars y
+
+                        case (var1, var2) of
+                          (Just (IntVal val1), Just (IntVal val2)) -> if val2 /= 0
+                                                                        then do
+                                                                                let result = val1 `div` val2
+                                                                                Just (IntVal (result))
+                                                                      else Just (StrVal ("Div by 0 error"))
+
+
+eval vars (Pow x y) = do
+                        let var1 = eval vars x
+                        let var2 = eval vars y
+
+                        case (var1, var2) of
+                          (Just (IntVal val1), Just (IntVal val2)) -> Just (IntVal (val1^val2))
+
+
+
+
+
+
 eval vars (ToString x) = Nothing
 
 digitToInt :: Char -> Value
@@ -71,7 +112,7 @@ pExpr = do t <- pTerm
               return (Add t e)
             ||| do char '-'
                    e <- pExpr
-                   error "Subtraction not yet implemented!"
+                   return (Subtract t e)
                  ||| return t
 
 -- pFactor :: Parser Expr
@@ -79,7 +120,10 @@ pExpr = do t <- pTerm
 --              return (Val (digitToInt d))
 --            ||| do v <- letter
 --                   return (Val (VarVal [v]))
+<<<<<<< HEAD
 --                 ||| do char '('
+=======
+>>>>>>> master
 --                        e <- pExpr
 --                        char ')'
 --                        return e
@@ -93,17 +137,27 @@ pFactor = do d <- natural
                        e <- pExpr
                        char '\"'
                        return e
+<<<<<<< HEAD
                       ||| do char '('
                              e <- pExpr
                              char ')'
                              return e
+=======
+                     ||| do char '('
+                            e <- pExpr
+                            char ')'
+                            return e
+>>>>>>> master
 
 pTerm :: Parser Expr
 pTerm = do f <- pFactor
            do char '*'
               t <- pTerm
-              error "Multiplication not yet implemented"
+              return (Mul f t)
             ||| do char '/'
                    t <- pTerm
-                   error "Division not yet implemented"
-                 ||| return f
+                   return (Div f t)
+                   ||| do char '^'
+                          t <- pTerm
+                          return (Pow f t)
+                          ||| return f
