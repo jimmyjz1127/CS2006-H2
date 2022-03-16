@@ -44,6 +44,9 @@ eval :: [(Name, Value)] -> -- Variable name to value mapping
         Expr -> -- Expression to evaluate
         Maybe Value -- Result (if no errors such as missing variables)
 eval vars (Val x) = Just x -- for values, just give the value directly
+
+
+
 eval vars (Add x y) = do
                         let var1 = eval vars x
                         let var2 = eval vars y
@@ -64,7 +67,6 @@ eval vars (Add x y) = do
                                                                       let val2 = getValueEx b vars
                                                                       case (val1,val2) of
                                                                            ((IntVal val1_1),  (IntVal val2_2)) -> Just (IntVal (val1_1 + val2_2))
-
 
 
 
@@ -107,7 +109,6 @@ eval vars (Mul x y) = do
                                                                       let val2 = getValueEx b vars
                                                                       case (val1,val2) of
                                                                            ((IntVal val1_1),  (IntVal val2_2)) -> Just (IntVal (val1_1 * val2_2))
-
 
 
 
@@ -172,8 +173,6 @@ eval vars (Mod x y) = do
                                                                            ((IntVal val1_1),  (IntVal val2_2)) -> do if val2_2 /= 0
                                                                                                                         then Just (IntVal (val1_1 `mod` val2_2))
                                                                                                                      else Just (StrVal ("Div by 0 error"))
-
-
 
 
 
