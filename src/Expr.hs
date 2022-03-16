@@ -239,7 +239,6 @@ pExpr = do t <- pTerm
 --                        return e
 
 pFactor :: Parser Expr
--- pFactor = do d <- natural
 pFactor = do d <- integer
              return (Val (IntVal d))
            ||| do v <- identifier
