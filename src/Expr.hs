@@ -116,19 +116,30 @@ eval vars (Div x y) = do
                         let var2 = eval vars y
 
                         case (var1, var2) of
-                             (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a `div` b))
-                             (Just (VarVal a), Just (IntVal b)) -> do let val1 = getValueEx a vars
-                                                                      case val1 of
-                                                                          (IntVal val1_1) -> Just (IntVal (val1_1 `div` b))
+                             (Just (IntVal a), Just (IntVal b)) -> do if b /= 0
+                                                                        then Just (IntVal (a `div` b))
+                                                                      else Just (StrVal ("Div by 0 error"))
+
+                             (Just (VarVal a), Just (IntVal b)) -> do if b /= 0
+                                                                         then do let val1 = getValueEx a vars
+                                                                                 case val1 of
+                                                                                      (IntVal val1_1) -> Just (IntVal (val1_1 `div` b))
+                                                                      else Just (StrVal ("Div by 0 error"))
+
+
 
                              (Just (IntVal a), Just (VarVal b)) -> do let val2 = getValueEx b vars
                                                                       case val2 of
-                                                                          (IntVal val2_2) -> Just (IntVal (a `div` val2_2))
+                                                                          (IntVal val2_2) -> do if val2_2 /= 0
+                                                                                                  then Just (IntVal (a `div` val2_2))
+                                                                                                else Just (StrVal ("Div by 0 error"))
 
                              (Just (VarVal a), Just (VarVal b)) -> do let val1 = getValueEx a vars
                                                                       let val2 = getValueEx b vars
                                                                       case (val1,val2) of
-                                                                           ((IntVal val1_1),  (IntVal val2_2)) -> Just (IntVal (val1_1 `div` val2_2))
+                                                                           ((IntVal val1_1),  (IntVal val2_2)) -> do if val2_2 /= 0
+                                                                                                                        then Just (IntVal (val1_1 `div` val2_2))
+                                                                                                                     else Just (StrVal ("Div by 0 error"))
 
 
 
@@ -136,26 +147,31 @@ eval vars (Mod x y) = do
                         let var1 = eval vars x
                         let var2 = eval vars y
 
-                        -- case (var1, var2) of
-                        --   (Just (IntVal val1), Just (IntVal val2)) -> if val2 /= 0
-                        --                                                 then do
-                        --                                                       let result = val1 `mod` val2
-                        --                                                       Just (IntVal (result))
-                        --                                               else Just (StrVal ("Div by 0 error"))
                         case (var1, var2) of
-                             (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a `mod` b))
-                             (Just (VarVal a), Just (IntVal b)) -> do let val1 = getValueEx a vars
-                                                                      case val1 of
-                                                                          (IntVal val1_1) -> Just (IntVal (val1_1 `mod` b))
+                             (Just (IntVal a), Just (IntVal b)) -> do if b /= 0
+                                                                        then Just (IntVal (a `mod` b))
+                                                                      else Just (StrVal ("Div by 0 error"))
+
+                             (Just (VarVal a), Just (IntVal b)) -> do if b /= 0
+                                                                         then do let val1 = getValueEx a vars
+                                                                                 case val1 of
+                                                                                      (IntVal val1_1) -> Just (IntVal (val1_1 `mod` b))
+                                                                      else Just (StrVal ("Div by 0 error"))
+
+
 
                              (Just (IntVal a), Just (VarVal b)) -> do let val2 = getValueEx b vars
                                                                       case val2 of
-                                                                          (IntVal val2_2) -> Just (IntVal (a `mod` val2_2))
+                                                                          (IntVal val2_2) -> do if val2_2 /= 0
+                                                                                                  then Just (IntVal (a `mod` val2_2))
+                                                                                                else Just (StrVal ("Div by 0 error"))
 
                              (Just (VarVal a), Just (VarVal b)) -> do let val1 = getValueEx a vars
                                                                       let val2 = getValueEx b vars
                                                                       case (val1,val2) of
-                                                                           ((IntVal val1_1),  (IntVal val2_2)) -> Just (IntVal (val1_1 `mod` val2_2))
+                                                                           ((IntVal val1_1),  (IntVal val2_2)) -> do if val2_2 /= 0
+                                                                                                                        then Just (IntVal (val1_1 `mod` val2_2))
+                                                                                                                     else Just (StrVal ("Div by 0 error"))
 
 
 
