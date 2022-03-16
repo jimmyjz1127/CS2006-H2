@@ -2,6 +2,7 @@ module Expr where
 
 import Parsing
 
+
 type Name = String
 
 -- At first, 'Expr' contains only addition, conversion to strings, and integer
@@ -12,7 +13,7 @@ data Expr = Add Expr Expr
           | Div Expr Expr
           | ToString Expr
           | Pow Expr Expr
-          -- | ABS Expr
+          | Mod Expr Expr
           | Val Value
 
   deriving Show
@@ -33,6 +34,12 @@ setVar name value = Set name value
 
 
 
+getValueEx :: String ->  [(Name, Value)] -> Value
+getValueEx name vars = snd(head(filter (\a -> fst(a) == name ) (vars)))
+
+
+
+
 eval :: [(Name, Value)] -> -- Variable name to value mapping
         Expr -> -- Expression to evaluate
         Maybe Value -- Result (if no errors such as missing variables)
@@ -40,11 +47,23 @@ eval vars (Val x) = Just x -- for values, just give the value directly
 eval vars (Add x y) = do
                         let var1 = eval vars x
                         let var2 = eval vars y
-
+                        --
+                        -- case (var1, var2) of
+                        --      (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a + b))
                         case (var1, var2) of
                              (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a + b))
-                             Nothing                            -> Just (StrVal ("error"))
+                             (Just (VarVal a), Just (IntVal b)) -> do let val1 = getValueEx a vars
+                                                                      case val1 of
+                                                                          (IntVal val1_1) -> Just (IntVal (val1_1 + b))
 
+                             (Just (IntVal a), Just (VarVal b)) -> do let val2 = getValueEx b vars
+                                                                      case val2 of
+                                                                          (IntVal val2_2) -> Just (IntVal (a + val2_2))
+
+                             (Just (VarVal a), Just (VarVal b)) -> do let val1 = getValueEx a vars
+                                                                      let val2 = getValueEx b vars
+                                                                      case (val1,val2) of
+                                                                           ((IntVal val1_1),  (IntVal val2_2)) -> Just (IntVal (val1_1 + val2_2))
 
 
 
@@ -54,8 +73,20 @@ eval vars (Subtract x y) = do
                              let var2 = eval vars y
 
                              case (var1, var2) of
-                               (Just (IntVal val1), Just (IntVal val2)) -> Just (IntVal (val1 - val2))
-                               Nothing                                  -> Just (StrVal ("error"))
+                                  (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a - b))
+                                  (Just (VarVal a), Just (IntVal b)) -> do let val1 = getValueEx a vars
+                                                                           case val1 of
+                                                                               (IntVal val1_1) -> Just (IntVal (val1_1 - b))
+
+                                  (Just (IntVal a), Just (VarVal b)) -> do let val2 = getValueEx b vars
+                                                                           case val2 of
+                                                                               (IntVal val2_2) -> Just (IntVal (a - val2_2))
+
+                                  (Just (VarVal a), Just (VarVal b)) -> do let val1 = getValueEx a vars
+                                                                           let val2 = getValueEx b vars
+                                                                           case (val1,val2) of
+                                                                                ((IntVal val1_1),  (IntVal val2_2)) -> Just (IntVal (val1_1 - val2_2))
+
 
 
 eval vars (Mul x y) = do
@@ -63,8 +94,21 @@ eval vars (Mul x y) = do
                         let var2 = eval vars y
 
                         case (var1, var2) of
-                          (Just (IntVal val1), Just (IntVal val2)) -> Just (IntVal (val1 * val2))
-                          Nothing                                  -> Just (StrVal ("error"))
+                             (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a * b))
+                             (Just (VarVal a), Just (IntVal b)) -> do let val1 = getValueEx a vars
+                                                                      case val1 of
+                                                                          (IntVal val1_1) -> Just (IntVal (val1_1 * b))
+
+                             (Just (IntVal a), Just (VarVal b)) -> do let val2 = getValueEx b vars
+                                                                      case val2 of
+                                                                          (IntVal val2_2) -> Just (IntVal (a * val2_2))
+
+                             (Just (VarVal a), Just (VarVal b)) -> do let val1 = getValueEx a vars
+                                                                      let val2 = getValueEx b vars
+                                                                      case (val1,val2) of
+                                                                           ((IntVal val1_1),  (IntVal val2_2)) -> Just (IntVal (val1_1 * val2_2))
+
+
 
 
 eval vars (Div x y) = do
@@ -72,12 +116,49 @@ eval vars (Div x y) = do
                         let var2 = eval vars y
 
                         case (var1, var2) of
-                          (Just (IntVal val1), Just (IntVal val2)) -> if val2 /= 0
-                                                                        then do
-                                                                                let result = val1 `div` val2
-                                                                                Just (IntVal (result))
-                                                                      else Just (StrVal ("Div by 0 error"))
-                          Nothing                                  -> Just (StrVal ("error"))
+                             (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a `div` b))
+                             (Just (VarVal a), Just (IntVal b)) -> do let val1 = getValueEx a vars
+                                                                      case val1 of
+                                                                          (IntVal val1_1) -> Just (IntVal (val1_1 `div` b))
+
+                             (Just (IntVal a), Just (VarVal b)) -> do let val2 = getValueEx b vars
+                                                                      case val2 of
+                                                                          (IntVal val2_2) -> Just (IntVal (a `div` val2_2))
+
+                             (Just (VarVal a), Just (VarVal b)) -> do let val1 = getValueEx a vars
+                                                                      let val2 = getValueEx b vars
+                                                                      case (val1,val2) of
+                                                                           ((IntVal val1_1),  (IntVal val2_2)) -> Just (IntVal (val1_1 `div` val2_2))
+
+
+
+eval vars (Mod x y) = do
+                        let var1 = eval vars x
+                        let var2 = eval vars y
+
+                        -- case (var1, var2) of
+                        --   (Just (IntVal val1), Just (IntVal val2)) -> if val2 /= 0
+                        --                                                 then do
+                        --                                                       let result = val1 `mod` val2
+                        --                                                       Just (IntVal (result))
+                        --                                               else Just (StrVal ("Div by 0 error"))
+                        case (var1, var2) of
+                             (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a `mod` b))
+                             (Just (VarVal a), Just (IntVal b)) -> do let val1 = getValueEx a vars
+                                                                      case val1 of
+                                                                          (IntVal val1_1) -> Just (IntVal (val1_1 `mod` b))
+
+                             (Just (IntVal a), Just (VarVal b)) -> do let val2 = getValueEx b vars
+                                                                      case val2 of
+                                                                          (IntVal val2_2) -> Just (IntVal (a `mod` val2_2))
+
+                             (Just (VarVal a), Just (VarVal b)) -> do let val1 = getValueEx a vars
+                                                                      let val2 = getValueEx b vars
+                                                                      case (val1,val2) of
+                                                                           ((IntVal val1_1),  (IntVal val2_2)) -> Just (IntVal (val1_1 `mod` val2_2))
+
+
+
 
 
 eval vars (Pow x y) = do
@@ -85,24 +166,28 @@ eval vars (Pow x y) = do
                         let var2 = eval vars y
 
                         case (var1, var2) of
-                          (Just (IntVal val1), Just (IntVal val2)) -> Just (IntVal (val1^val2))
-                          Nothing                                  -> Just (StrVal ("error"))
+                             (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a^b))
+                             (Just (VarVal a), Just (IntVal b)) -> do let val1 = getValueEx a vars
+                                                                      case val1 of
+                                                                          (IntVal val1_1) -> Just (IntVal (val1_1^b))
 
--- eval vars (ABS x) = do
---                         let var1 = eval vars x
---
---                         case var1 of
---                           Just (IntVal val1) -> if val1 < 0
---                                                   then Just (IntVal (-val1))
---                                                 else Just(IntVal (val1))
+                             (Just (IntVal a), Just (VarVal b)) -> do let val2 = getValueEx b vars
+                                                                      case val2 of
+                                                                          (IntVal val2_2) -> Just (IntVal (a^val2_2))
+
+                             (Just (VarVal a), Just (VarVal b)) -> do let val1 = getValueEx a vars
+                                                                      let val2 = getValueEx b vars
+                                                                      case (val1,val2) of
+                                                                           ((IntVal val1_1),  (IntVal val2_2)) -> Just (IntVal (val1_1^val2_2))
+
+
+
 
 
 
 
 
 eval vars (ToString x) = Nothing
-
-
 
 digitToInt :: Char -> Value
 digitToInt x = IntVal (fromEnum x - fromEnum '0')
@@ -119,7 +204,6 @@ pCommand = do t <- ident
                    ||| do string "quit"
                           return (Quit)
 
-
 pExpr :: Parser Expr
 pExpr = do t <- pTerm
            do char '+'
@@ -128,14 +212,7 @@ pExpr = do t <- pTerm
             ||| do char '-'
                    e <- pExpr
                    return (Subtract t e)
-                   ||| return t
-                   -- ||| do string "abs"
-                   --        char '('
-                   --        e <- pExpr
-                   --        char ')'
-                   --        return (ABS e)
-
-
+                 ||| return t
 
 -- pFactor :: Parser Expr
 -- pFactor = do d <- digit
@@ -171,4 +248,7 @@ pTerm = do f <- pFactor
                    ||| do char '^'
                           t <- pTerm
                           return (Pow f t)
+                          ||| do char '%'
+                                 t <- pTerm
+                                 return (Mod f t)
                           ||| return f

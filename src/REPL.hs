@@ -29,8 +29,9 @@ contains :: Name ->  LState -> Bool
 contains name st = length (filter (\a -> fst(a) == name ) (vars st)) > 0
 
 getValue :: String ->  LState -> Value
-getValue name st = snd(head(filter (\a -> fst(a) == name ) (vars st)))
-
+getValue name st = do if contains name st
+                        then snd(head(filter (\a -> fst(a) == name ) (vars st)))
+                      else (StrVal)("Value not found")
 -- Return a new set of variables with the given name removed
 dropVar :: Name -> LState -> LState
 dropVar name st = do
