@@ -129,6 +129,12 @@ int                           =  do char '-'
 space                         :: Parser ()
 space                         =  do many (sat isSpace)
                                     return ()
+
+stringLit                     :: Parser String
+stringLit                     = do char '\"'
+                                   word <- many alphanum
+                                   char '\"'
+                                   return word
 {-
 Ignoring spacing
 ----------------

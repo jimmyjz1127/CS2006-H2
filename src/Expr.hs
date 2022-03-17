@@ -258,10 +258,8 @@ pFactor = do d <- integer
              return (Val (IntVal d))
            ||| do v <- identifier
                   return (Val (VarVal v))
-                ||| do char '\"'
-                       e <- pExpr
-                       char '\"'
-                       return e
+                ||| do w <- stringLit
+                       return (Val (StrVal w))
                      ||| do char '('
                             e <- pExpr
                             char ')'
