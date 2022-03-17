@@ -67,8 +67,10 @@ process st (Quit) = putStrLn("Quitting Program...")
 
 
 process st (Read e) = do case (eval (vars st) e) of
-                              Just (StrVal val) -> do let file = readFile e
+                              Just (StrVal val) -> do file <- readFile e
                                                       let content = lines file
+                                                      foldr ()
+
 
 
 
