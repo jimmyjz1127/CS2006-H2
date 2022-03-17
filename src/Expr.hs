@@ -14,6 +14,7 @@ data Expr = Add Expr Expr
           | ToString Expr
           | Pow Expr Expr
           | Mod Expr Expr
+          | ABS Expr
           | Val Value
 
   deriving Show
@@ -197,12 +198,23 @@ eval vars (Pow x y) = do
 
 
 
+eval vars (ABS x) = do
+                        let var1 = eval vars x
+                        case var1 of
+                             Just (IntVal val1) -> do if val1 < 0
+                                                        then Just(IntVal (-val1))
+                                                      else Just(IntVal val1)
+                             Nothing            -> Just (StrVal "Type Error")
 
 
 
 
+eval vars (ToString x) = do
+                            let var1 = eval vars x
+                            case (var1) of
+                                 Just (IntVal val1) -> Just (StrVal (show val1))
 
-eval vars (ToString x) = Nothing
+
 
 digitToInt :: Char -> Value
 digitToInt x = IntVal (fromEnum x - fromEnum '0')
@@ -220,14 +232,19 @@ pCommand = do t <- ident
                           return (Quit)
 
 pExpr :: Parser Expr
-pExpr = do t <- pTerm
-           do char '+'
-              e <- pExpr
-              return (Add t e)
-            ||| do char '-'
-                   e <- pExpr
-                   return (Subtract t e)
-                 ||| return t
+pExpr = do string "abs"
+           char '('
+           e <- pExpr
+           char ')'
+           return (ABS e)
+        ||| do t <- pTerm
+               do char '+'
+                  e <- pExpr
+                  return (Add t e)
+                ||| do char '-'
+                       e <- pExpr
+                       return (Subtract t e)
+                     ||| return t
 
 -- pFactor :: Parser Expr
 -- pFactor = do d <- digit
