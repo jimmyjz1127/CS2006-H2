@@ -44,6 +44,7 @@ dropVar name st = do
 process :: LState -> Command -> IO ()
 process st (Set name e) =
   case (eval (vars st) e) of
+    Just (VarVal val) -> repl (updateVars name (getValue val st) st)
     Just val -> repl (updateVars name val st)
     Nothing  -> repl st
   -- st' should include the variable set to the result of evaluating e
