@@ -12,6 +12,7 @@ data Expr = Add Expr Expr
           | Mul Expr Expr
           | Div Expr Expr
           | ToString Expr
+          | Concat Expr Expr
           | Pow Expr Expr
           | Mod Expr Expr
           | ABS Expr
@@ -46,7 +47,23 @@ eval :: [(Name, Value)] -> -- Variable name to value mapping
         Maybe Value -- Result (if no errors such as missing variables)
 eval vars (Val x) = Just x -- for values, just give the value directly
 
+eval vars (Concat x y) = do
+                            let var1 = eval vars x
+                            let var2 = eval vars y
 
+                            case (var1, var2) of
+                                 ((Just (StrVal a)),(Just (StrVal b))) -> Just (StrVal (a++b))
+                                 ((Just (VarVal a)), (Just (StrVal b))) -> do let val1 = getValueEx a vars
+                                                                              case val1 of
+                                                                                   (StrVal w1) -> Just (StrVal (w1 ++ b))
+                                 ((Just (StrVal a)), (Just (VarVal b))) -> do let val2 = getValueEx b vars
+                                                                              case val2 of
+                                                                                   (StrVal w2) -> Just (StrVal (a ++ w2))
+                                 ((Just (VarVal a)), (Just (VarVal b))) -> do
+                                                                             let val1 = getValueEx a vars
+                                                                             let val2 = getValueEx b vars
+                                                                             case (val1,val2) of
+                                                                                  (StrVal w1, StrVal w2) -> Just (StrVal (w1 ++ w2))
 
 eval vars (Add x y) = do
                         let var1 = eval vars x
@@ -237,14 +254,18 @@ pExpr = do string "abs"
            e <- pExpr
            char ')'
            return (ABS e)
-        ||| do t <- pTerm
-               do char '+'
-                  e <- pExpr
-                  return (Add t e)
-                ||| do char '-'
-                       e <- pExpr
-                       return (Subtract t e)
-                     ||| return t
+        ||| do w1 <- pFactor
+               char '&'
+               w2 <- pFactor
+               return (Concat w1 w2)
+            ||| do t <- pTerm
+                   do char '+'
+                      e <- pExpr
+                      return (Add t e)
+                    ||| do char '-'
+                           e <- pExpr
+                           return (Subtract t e)
+                          ||| return t
 
 -- pFactor :: Parser Expr
 -- pFactor = do d <- digit
