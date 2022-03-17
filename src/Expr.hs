@@ -3,6 +3,7 @@ module Expr where
 import Parsing
 
 
+
 type Name = String
 
 -- At first, 'Expr' contains only addition, conversion to strings, and integer
@@ -22,6 +23,7 @@ data Expr = Add Expr Expr
 -- These are the REPL commands
 data Command = Set Name Expr -- assign an expression to a variable name
              | Print Expr    -- evaluate an expression and print the result
+             | Read Expr
              | Quit
   deriving Show
 
@@ -228,7 +230,10 @@ pCommand = do t <- ident
                    return (Print e)
                    ||| do string "quit"
                           return (Quit)
-
+                          ||| do string "read"
+                                 space
+                                 e <- pExpr
+                                 return(Read e)
 pExpr :: Parser Expr
 pExpr = do string "abs"
            char '('

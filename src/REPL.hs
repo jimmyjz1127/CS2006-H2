@@ -2,6 +2,7 @@ module REPL where
 
 import Expr
 import Parsing
+import System.IO
 
 data LState = LState { vars :: [(Name, Value)] }
 
@@ -63,6 +64,21 @@ process st (Print e) =
             Nothing -> putStrLn("")
       repl st
 process st (Quit) = putStrLn("Quitting Program...")
+
+
+process st (Read e) = do case (eval (vars st) e) of
+                              Just (StrVal val) -> do let file = readFile e
+                                                      let content = lines file
+
+
+
+
+
+
+
+
+
+
 
 
 
