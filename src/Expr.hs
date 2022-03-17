@@ -219,7 +219,9 @@ digitToInt x = IntVal (fromEnum x - fromEnum '0')
 
 pCommand :: Parser Command
 pCommand = do t <- ident
+              space
               char '='
+              space
               e <- pExpr
               return (Set t e)
             ||| do string "print"
