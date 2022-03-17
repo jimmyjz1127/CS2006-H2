@@ -240,6 +240,12 @@ pExpr = do string "abs"
            e <- pExpr
            char ')'
            return (ABS e)
+        ||| do string "toString"
+               char '('
+               e <- pExpr
+               char ')'
+               return (ToString e)
+
         ||| do t <- pTerm
                do char '+'
                   e <- pExpr
