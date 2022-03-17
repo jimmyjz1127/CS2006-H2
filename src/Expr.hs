@@ -241,9 +241,7 @@ pExpr = do string "abs"
            char ')'
            return (ABS e)
         ||| do string "toString"
-               char '('
-               e <- pExpr
-               char ')'
+               e <- pFactor
                return (ToString e)
 
         ||| do t <- pTerm
