@@ -17,7 +17,7 @@ data Expr = Add Expr Expr
   deriving Show
 
 -- These are the REPL commands
-data Command = Set Name Expr -- assign an expression to a variable name
+data Command = Set Expr -- assign an expression to a variable name
              | Print Expr    -- evaluate an expression and print the result
              | Quit
   deriving Show
@@ -27,8 +27,8 @@ data Value = IntVal Int | StrVal String | CharVal Char | VarVal Name
   deriving Show
 
 
-setVar :: Name -> Expr -> Command
-setVar name value = Set name value
+-- setVar :: Name -> Expr -> Command
+-- setVar name value = Set name value
 
 
 
