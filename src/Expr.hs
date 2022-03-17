@@ -115,14 +115,6 @@ pExpr = do t <- pTerm
                    return (Subtract t e)
                  ||| return t
 
--- pFactor :: Parser Expr
--- pFactor = do d <- digit
---              return (Val (digitToInt d))
---            ||| do v <- letter
---                   return (Val (VarVal [v]))
---                        e <- pExpr
---                        char ')'
---                        return e
 
 pFactor :: Parser Expr
 pFactor = do d <- natural
