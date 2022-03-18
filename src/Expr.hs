@@ -272,16 +272,6 @@ pExpr = do string "abs"
            e <- pExpr
            char ')'
            return (ABS e)
-<<<<<<< Updated upstream
-        ||| do t <- pTerm
-               do char '+'
-                  e <- pExpr
-                  return (Add t e)
-                ||| do char '-'
-                       e <- pExpr
-                       return (Subtract t e)
-                     ||| return t
-=======
         ||| do w1 <- pFactor
                char '&'
                w2 <- pFactor
@@ -294,7 +284,6 @@ pExpr = do string "abs"
                            e <- pExpr
                            return (Subtract t e)
                           ||| return t
->>>>>>> Stashed changes
 
 -- pFactor :: Parser Expr
 -- pFactor = do d <- digit

@@ -70,16 +70,6 @@ process st (Quit) = putStrLn("Quitting Program...")
 process st (Read e) = do case (eval (vars st) e) of
                               Just (StrVal val) -> do file <- readFile val
                                                       let content = lines file
-<<<<<<< Updated upstream
-                                                      foldr ()
-
-
-
-
-
-
-
-=======
                                                       replf st content
                               _                 -> do putStrLn ("Error")
                                                       repl st
@@ -109,7 +99,6 @@ processf st (Print e) inp =
       replf st inp
 
 processf st (Quit) inp = putStrLn("Quitting Program...")
->>>>>>> Stashed changes
 
 
 
@@ -130,8 +119,6 @@ repl st = do putStr ("> ")
                           process st cmd
                   _ -> do putStrLn "Parse error"
                           repl st
-<<<<<<< Updated upstream
-=======
 
 
 replf :: LState -> [String] -> IO ()
@@ -142,4 +129,3 @@ replf st inp = do if (length inp) /= 0
                                  [(cmd, "")] -> do processf st cmd inp
                                  _ -> do putStrLn "Parse error"
                   else repl st
->>>>>>> Stashed changes
