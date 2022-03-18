@@ -263,8 +263,12 @@ pCommand = do t <- ident
                    space
                    e <- pExpr
                    return (Print e)
-                   ||| do string "quit"
-                          return (Quit)
+                 ||| do string "quit"
+                        return (Quit)
+                      ||| do string "read"
+                             space
+                             e <- pExpr
+                             return (Read e)
 
 pExpr :: Parser Expr
 pExpr = do string "abs"

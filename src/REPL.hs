@@ -75,14 +75,14 @@ process st (Read e) = do case (eval (vars st) e) of
                                                       repl st
 
 
--------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 processf :: LState -> Command  -> [String] -> IO ()
 processf st (Set name e)inp =
   case (eval (vars st) e) of
     Just (VarVal val) -> replf (updateVars name (getValue val st) st) inp
     Just val -> replf (updateVars name val st) inp
     Nothing  -> replf st inp
-  -- st' should include the variable set to the result of evaluating e
+
 
 processf st (Print e) inp =
     do
@@ -99,7 +99,7 @@ processf st (Print e) inp =
       replf st inp
 
 processf st (Quit) inp = putStrLn("Quitting Program...")
-
+--------------------------------------------------------------------------------
 
 
 
@@ -124,7 +124,7 @@ repl st = do putStr ("> ")
 replf :: LState -> [String] -> IO ()
 replf st inp = do if (length inp) /= 0
                      then do
-                            putStrLn("Input: " ++ (head inp))
+                            putStrLn("Input: " ++ (head inp)) --Remove
                             case parse pCommand (head inp) of
                                  [(cmd, "")] -> do processf st cmd inp
                                  _ -> do putStrLn "Parse error"
