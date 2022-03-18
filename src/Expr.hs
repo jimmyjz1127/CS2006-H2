@@ -13,6 +13,7 @@ data Expr = Add Expr Expr
           | Mul Expr Expr
           | Div Expr Expr
           | ToString Expr
+          | Concat Expr Expr
           | Pow Expr Expr
           | Mod Expr Expr
           | ABS Expr
@@ -48,6 +49,23 @@ eval :: [(Name, Value)] -> -- Variable name to value mapping
         Maybe Value -- Result (if no errors such as missing variables)
 eval vars (Val x) = Just x -- for values, just give the value directly
 
+eval vars (Concat x y) = do
+                            let var1 = eval vars x
+                            let var2 = eval vars y
+
+                            case (var1, var2) of
+                                 ((Just (StrVal a)),(Just (StrVal b))) -> Just (StrVal (a++b))
+                                 ((Just (VarVal a)), (Just (StrVal b))) -> do let val1 = getValueEx a vars
+                                                                              case val1 of
+                                                                                   (StrVal w1) -> Just (StrVal (w1 ++ b))
+                                 ((Just (StrVal a)), (Just (VarVal b))) -> do let val2 = getValueEx b vars
+                                                                              case val2 of
+                                                                                   (StrVal w2) -> Just (StrVal (a ++ w2))
+                                 ((Just (VarVal a)), (Just (VarVal b))) -> do
+                                                                             let val1 = getValueEx a vars
+                                                                             let val2 = getValueEx b vars
+                                                                             case (val1,val2) of
+                                                                                  (StrVal w1, StrVal w2) -> Just (StrVal (w1 ++ w2))
 
 
 eval vars (Add x y) = do
@@ -219,9 +237,26 @@ eval vars (ToString x) = do
 digitToInt :: Char -> Value
 digitToInt x = IntVal (fromEnum x - fromEnum '0')
 
+-- pCommand :: Parser Command
+-- pCommand = do t <- ident
+--               char '='
+--               e <- pExpr
+--               return (Set t e)
+--             ||| do string "print"
+--                    space
+--                    e <- pExpr
+--                    return (Print e)
+--                    ||| do string "quit"
+--                           return (Quit)
+--                           ||| do string "read"
+--                                  space
+--                                  e <- pExpr
+--                                  return(Read e)
 pCommand :: Parser Command
 pCommand = do t <- ident
+              space
               char '='
+              space
               e <- pExpr
               return (Set t e)
             ||| do string "print"
@@ -230,16 +265,14 @@ pCommand = do t <- ident
                    return (Print e)
                    ||| do string "quit"
                           return (Quit)
-                          ||| do string "read"
-                                 space
-                                 e <- pExpr
-                                 return(Read e)
+
 pExpr :: Parser Expr
 pExpr = do string "abs"
            char '('
            e <- pExpr
            char ')'
            return (ABS e)
+<<<<<<< Updated upstream
         ||| do t <- pTerm
                do char '+'
                   e <- pExpr
@@ -248,6 +281,20 @@ pExpr = do string "abs"
                        e <- pExpr
                        return (Subtract t e)
                      ||| return t
+=======
+        ||| do w1 <- pFactor
+               char '&'
+               w2 <- pFactor
+               return (Concat w1 w2)
+            ||| do t <- pTerm
+                   do char '+'
+                      e <- pExpr
+                      return (Add t e)
+                    ||| do char '-'
+                           e <- pExpr
+                           return (Subtract t e)
+                          ||| return t
+>>>>>>> Stashed changes
 
 -- pFactor :: Parser Expr
 -- pFactor = do d <- digit

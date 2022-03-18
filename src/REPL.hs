@@ -50,6 +50,7 @@ process st (Set name e) =
     Just val -> repl (updateVars name val st)
     Nothing  -> repl st
   -- st' should include the variable set to the result of evaluating e
+
 process st (Print e) =
     do
       case (eval (vars st) e) of
@@ -67,8 +68,9 @@ process st (Quit) = putStrLn("Quitting Program...")
 
 
 process st (Read e) = do case (eval (vars st) e) of
-                              Just (StrVal val) -> do file <- readFile e
+                              Just (StrVal val) -> do file <- readFile val
                                                       let content = lines file
+<<<<<<< Updated upstream
                                                       foldr ()
 
 
@@ -77,6 +79,37 @@ process st (Read e) = do case (eval (vars st) e) of
 
 
 
+=======
+                                                      replf st content
+                              _                 -> do putStrLn ("Error")
+                                                      repl st
+
+
+-------------------------------------------------------------------------------------
+processf :: LState -> Command  -> [String] -> IO ()
+processf st (Set name e)inp =
+  case (eval (vars st) e) of
+    Just (VarVal val) -> replf (updateVars name (getValue val st) st) inp
+    Just val -> replf (updateVars name val st) inp
+    Nothing  -> replf st inp
+  -- st' should include the variable set to the result of evaluating e
+
+processf st (Print e) inp =
+    do
+      case (eval (vars st) e) of
+            -- Just (NameVal name) -> putStrLn(show (getValue name st))
+            Just (IntVal val)  -> putStrLn(show val)
+            Just (StrVal val)  -> putStrLn(val)
+            Just (CharVal val) -> putStrLn(show val)
+            Just (VarVal var)  -> case (getValue var st) of
+                 (IntVal val)  -> putStrLn(show val)
+                 (CharVal val) -> putStrLn(show val)
+                 (StrVal val)  -> putStrLn(val)
+            Nothing -> putStrLn("")
+      replf st inp
+
+processf st (Quit) inp = putStrLn("Quitting Program...")
+>>>>>>> Stashed changes
 
 
 
@@ -97,3 +130,16 @@ repl st = do putStr ("> ")
                           process st cmd
                   _ -> do putStrLn "Parse error"
                           repl st
+<<<<<<< Updated upstream
+=======
+
+
+replf :: LState -> [String] -> IO ()
+replf st inp = do if (length inp) /= 0
+                     then do
+                            putStrLn("Input: " ++ (head inp))
+                            case parse pCommand (head inp) of
+                                 [(cmd, "")] -> do processf st cmd inp
+                                 _ -> do putStrLn "Parse error"
+                  else repl st
+>>>>>>> Stashed changes
