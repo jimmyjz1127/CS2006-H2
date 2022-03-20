@@ -255,7 +255,8 @@ pExpr = do string "abs"
            char ')'
            return (ABS e)
         ||| do w1 <- pFactor
-               char '&'
+               char '+'
+               char '+'
                w2 <- pFactor
                return (Concat w1 w2)
             ||| do t <- pTerm

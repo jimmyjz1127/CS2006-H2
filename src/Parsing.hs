@@ -47,6 +47,14 @@ instance MonadPlus Parser where
                                                [(v,out)] -> [(v,out)])
 
 {-
+Auxiliary functions
+-------------
+-}
+
+isPrintable                   :: Char -> Bool
+isPrintable x                 = (&&) (isPrint x) (x /= '\"')
+
+{-
 Basic parsers
 -------------
 -}
@@ -94,6 +102,9 @@ letter                        =  sat isAlpha
 alphanum                      :: Parser Char
 alphanum                      =  sat isAlphaNum
 
+printable                     :: Parser Char
+printable                     =  sat isPrintable
+
 char                          :: Char -> Parser Char
 char x                        =  sat (== x)
 
@@ -132,7 +143,7 @@ space                         =  do many (sat isSpace)
 
 stringLit                     :: Parser String
 stringLit                     = do char '\"'
-                                   word <- many alphanum
+                                   word <- many printable
                                    char '\"'
                                    return word
 {-
