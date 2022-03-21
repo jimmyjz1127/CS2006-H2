@@ -123,8 +123,10 @@ eval vars (Mod x y) = do
 
                         case (var1, var2) of
                              (Just (IntVal a), Just (IntVal b)) -> do if b /= 0
-                                                                        then Just (IntVal (a `mod` b))
+                                                                         then Just (IntVal (a `mod` b))
                                                                       else Just (StrVal ("Div by 0 error"))
+                             _                                 -> Just (StrVal ("Type error"))
+
 
 
 eval vars (Pow x y) = do
@@ -132,8 +134,10 @@ eval vars (Pow x y) = do
                         let var2 = eval vars y
 
                         case (var1, var2) of
-                             (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a^b))
-                             (Just (FloatVal a), Just (IntVal b)) -> Just (FloatVal (a^b))
+                             (Just (IntVal a), Just (IntVal b))     -> Just (IntVal (a^b))
+                             (Just (FloatVal a), Just (IntVal b))   -> Just (FloatVal (a^b))
+                             (Just (IntVal a), Just (FloatVal b))   -> Just (FloatVal (a**b))
+                             (Just (FloatVal a), Just (FloatVal b)) -> Just (FloatVal (a**b))
                              _                                  -> Just (StrVal "Type Error")
 
 eval vars (ABS x) = do

@@ -101,11 +101,15 @@ processf st (Print e) inp =
             Just (IntVal val)  -> putStrLn(show val)
             Just (StrVal val)  -> putStrLn(val)
             Just (CharVal val) -> putStrLn(show val)
+            Just (FloatVal val)-> putStrLn(show val)
             Just (VarVal var)  -> case (getValue var st) of
                  (IntVal val)  -> putStrLn(show val)
                  (CharVal val) -> putStrLn(show val)
+                 (FloatVal val)-> putStrLn(show val)
                  (StrVal val)  -> putStrLn(val)
+                 _             -> putStrLn("Error")
             Nothing -> putStrLn("")
+            _                  -> putStrLn("Error")
       replf st inp
 
 processf st (Quit) inp = putStrLn("Quitting Program...")
@@ -131,7 +135,7 @@ repl st = do putStr ("> ")
 replf :: LState -> [String] -> IO ()
 replf st inp = do if (length inp) /= 0
                      then do
-                            putStrLn("Line: " ++ (head inp)) --Remove
+                            putStrLn("\nFile: " ++ (head inp)) --Optional
                             case parse pCommand (head inp) of
                                  [(cmd, "")] -> do processf st cmd (tail inp)
                                  _ -> do putStrLn "Parse error"
