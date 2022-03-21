@@ -223,7 +223,7 @@ integer                       :: Parser Int
 integer                       =  token int
 
 float                         :: Parser Float
-float                         = token flt
+float                         =  token flt
 
 symbol                        :: String -> Parser String
 symbol xs                     =  token (string xs)

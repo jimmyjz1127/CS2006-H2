@@ -133,6 +133,7 @@ eval vars (Pow x y) = do
 
                         case (var1, var2) of
                              (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a^b))
+                             (Just (FloatVal a), Just (IntVal b)) -> Just (FloatVal (a^b))
                              _                                  -> Just (StrVal "Type Error")
 
 eval vars (ABS x) = do
@@ -141,6 +142,9 @@ eval vars (ABS x) = do
                              Just (IntVal val1) -> do if val1 < 0
                                                         then Just(IntVal (-val1))
                                                       else Just(IntVal val1)
+                             Just (FloatVal val1) -> do if val1 < 0
+                                                          then Just(FloatVal (-val1))
+                                                        else Just(FloatVal val1)                                                      
                              _            -> Just (StrVal "Type Error")
 
 
@@ -239,18 +243,19 @@ pExpr = do string "abs"
 --                        return e
 
 pFactor :: Parser Expr
-pFactor = do d <- integer
-             return (Val (IntVal d))
-           ||| do v <- identifier
-                  return (Val (VarVal v))
-                ||| do w <- stringLit
-                       return (Val (StrVal w))
-                     ||| do char '('
-                            e <- pExpr
-                            char ')'
-                            return e
-                            ||| do f <- float
-                                   return (Val (FloatVal f))
+pFactor = do f <- float
+             return (Val (FloatVal f))
+             ||| do d <- integer
+                    return (Val (IntVal d))
+                    ||| do v <- identifier
+                           return (Val (VarVal v))
+                           ||| do w <- stringLit
+                                  return (Val (StrVal w))
+                                  ||| do char '('
+                                         e <- pExpr
+                                         char ')'
+                                         return e
+                          
 
 pTerm :: Parser Expr
 pTerm = do f <- pFactor
