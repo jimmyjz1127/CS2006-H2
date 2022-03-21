@@ -243,8 +243,7 @@ pCommand = do t <- ident
                                               return (IfThen condition [action1])
 
 pExpr :: Parser Expr
-pExpr = do string "abs"
-           char '('
+pExpr = do string "abs("
            e <- pExpr
            char ')'
            return (ABS e)
