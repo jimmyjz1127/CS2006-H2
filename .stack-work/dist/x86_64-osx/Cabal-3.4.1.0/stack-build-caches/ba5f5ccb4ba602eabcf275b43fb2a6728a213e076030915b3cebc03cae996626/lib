@@ -9,7 +9,7 @@
 /Users/jimmyzhang/.stack/programs/x86_64-osx/ghc-9.0.2/lib/ghc-9.0.2/lib/x86_64-osx-ghc-9.0.2/rts-1.0.2/include/ghcversion.h:
   hash: 3b6c0f16983344ce12525816947d892da98bc96f17a664531494f515b9356c81
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/src/REPL.hs:
-  hash: 86b03014128bc3957508873db26fd32a107376e680c7210be358a1c8ea9fe14c
+  hash: a529c76c6218fd9065311b11342c5e17d530cae4c3681552b2d80d8c775039c9
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/src/Main.hs:
   hash: 9019b891ad78be928e622ae14f6e265906e58d7ea3575954b58d0b981f5173cc
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/package.yaml:
@@ -17,4 +17,4 @@
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/README.md:
   hash: 5338127cce6afb99cfa19523248d92d276bb454138ebd95b6f50d040ca619dac
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/src/Expr.hs:
-  hash: 7a6521cbf89bcef1eb41b7a54249e486a8b68f57eb3816a5759ae9fb3a0562f4
+  hash: 9d27aa27e8312542610e3d7ce0b50a29382b13d33bc0915b21b793dac435cf57

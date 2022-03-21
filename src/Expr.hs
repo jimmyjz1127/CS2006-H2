@@ -65,9 +65,6 @@ eval vars (Concat x y) = do
 eval vars (Add x y) = do
                         let var1 = eval vars x
                         let var2 = eval vars y
-                        --
-                        -- case (var1, var2) of
-                        --      (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a + b))
                         case (var1, var2) of
                              (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a + b))
                              _                                  -> Just (StrVal "Type Error")

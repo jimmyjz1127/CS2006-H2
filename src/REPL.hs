@@ -66,12 +66,38 @@ process st (Print e) =
 process st (Quit) = putStrLn("Quitting Program...")
 
 
--- process st (Read e) = do case (eval (vars st) e) of
---                               Just (StrVal val) -> do file <- readFile e
---                                                       let content = lines file
---                                                       foldr (replf st)
+process st (Read e) = do case (eval (vars st) e) of
+                              Just (StrVal val) -> do file <- readFile val
+                                                      let content = lines file
+                                                      replf st content
+                              _                 -> do putStrLn ("Error")
+                                                      repl st
+
+--------------------------------------------------------------------------------
+processf :: LState -> Command  -> [String] -> IO ()
+processf st (Set name e)inp =
+  case (eval (vars st) e) of
+    Just (VarVal val) -> replf (updateVars name (getValue val st) st) inp
+    Just val -> replf (updateVars name val st) inp
+    Nothing  -> replf st inp
 
 
+processf st (Print e) inp =
+    do
+      case (eval (vars st) e) of
+            -- Just (NameVal name) -> putStrLn(show (getValue name st))
+            Just (IntVal val)  -> putStrLn(show val)
+            Just (StrVal val)  -> putStrLn(val)
+            Just (CharVal val) -> putStrLn(show val)
+            Just (VarVal var)  -> case (getValue var st) of
+                 (IntVal val)  -> putStrLn(show val)
+                 (CharVal val) -> putStrLn(show val)
+                 (StrVal val)  -> putStrLn(val)
+            Nothing -> putStrLn("")
+      replf st inp
+
+processf st (Quit) inp = putStrLn("Quitting Program...")
+--------------------------------------------------------------------------------
 
 
 
@@ -90,7 +116,11 @@ repl st = do putStr ("> ")
                           repl st
 
 
--- replf :: LState -> [String] -> IO ()
--- replf st inp = do case parse pCommand inp of
---                           [(cmd, "")] -> process st cmd
---                           _ -> do putStrLn "Parse error"
+replf :: LState -> [String] -> IO ()
+replf st inp = do if (length inp) /= 0
+                     then do
+                            putStrLn("Input: " ++ (head inp)) --Remove
+                            case parse pCommand (head inp) of
+                                 [(cmd, "")] -> do processf st cmd inp
+                                 _ -> do putStrLn "Parse error"
+                  else repl st
