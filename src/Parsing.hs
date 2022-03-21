@@ -101,6 +101,7 @@ sat                           :: (Char -> Bool) -> Parser Char
 sat p                         =  do x <- item
                                     if p x then return x else failure
 
+
 digit                         :: Parser Char
 digit                         =  sat isDigit
 
@@ -155,6 +156,7 @@ int                           =  do char '-'
 space                         :: Parser ()
 space                         =  do many (sat isSpace)
                                     return ()
+
 
 
 boolSymbol                    :: Parser Char

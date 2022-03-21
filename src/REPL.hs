@@ -78,8 +78,11 @@ process st (IfThen c a) = do
                              case var of
                                Just (BoolVal x) -> do
                                                      case x of
-                                                       True -> process st a
-                                                       False -> do repl st
+                                                       True -> process st (head a)
+                                                       False -> do
+                                                                  case (length a) of
+                                                                    2 -> process st (last a)
+                                                                    _ -> repl st
                                _                -> putStrLn("Invalid Condition")
 
 
