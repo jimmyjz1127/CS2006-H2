@@ -173,8 +173,9 @@ eval vars (Swap x) = do
 eval vars (ToString x) = do
                             let var1 = eval vars x
                             case (var1) of
-                                 Just (IntVal val1)  -> Just (StrVal (show val1))
-                                 Just (FloatVal val1)-> Just (StrVal (show val1))
+                                 Just (IntVal val1)   -> Just (StrVal (show val1))
+                                 Just (FloatVal val1) -> Just (StrVal (show val1))
+                                 _                    -> Just (StrVal ("Type Error"))
 
 eval vars (ToInt x) = do
                             let var1 = eval vars x
@@ -310,16 +311,6 @@ pExpr = do string "abs("
                                                                           return (Compare o t e)
                                                                           ||| return t
 
-
-
--- pFactor :: Parser Expr
--- pFactor = do d <- digit
---              return (Val (digitToInt d))
---            ||| do v <- letter
---                   return (Val (VarVal [v]))
---                        e <- pExpr
---                        char ')'
---                        return e
 
 pFactor :: Parser Expr
 pFactor = do f <- float
