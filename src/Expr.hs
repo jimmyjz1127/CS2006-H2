@@ -157,14 +157,14 @@ eval vars (CirA x) = do
                         let var1 = eval vars x
                         case var1 of
                              Just (IntVal val1)   -> Just (FloatVal (pi * (fromIntegral val1**2)) )
-                             Just (FloatVal val1) -> Just (FloatVal ((pi * (val1**2))) )                                                    
+                             Just (FloatVal val1) -> Just (FloatVal ((pi * (val1**2))) )
                              _            -> Just (StrVal "Type Error")
 
 eval vars (Swap x) = do
                         let var1 = eval vars x
                         case var1 of
                              Just (IntVal val1)   -> Just (FloatVal (fromIntegral val1))
-                             Just (FloatVal val1) -> Just (IntVal ( round val1) )                                                    
+                             Just (FloatVal val1) -> Just (IntVal ( round val1) )
                              _            -> Just (StrVal "Type Error")
 
 
@@ -172,7 +172,7 @@ eval vars (ToString x) = do
                             let var1 = eval vars x
                             case (var1) of
                                  Just (IntVal val1)  -> Just (StrVal (show val1))
-                                 Just (FloatVal val1)-> Just (StrVal (show val1)) 
+                                 Just (FloatVal val1)-> Just (StrVal (show val1))
 
 eval vars (Compare o x y) = do
                              let var1 = eval vars x
@@ -267,23 +267,6 @@ pExpr = do string "abs("
                char '+'
                w2 <- pFactor
                return (Concat w1 w2)
-<<<<<<< HEAD
-              ||| do t <- pTerm
-                     do char '+'
-                        e <- pExpr
-                        return (Add t e)
-                      ||| do char '-'
-                             e <- pExpr
-                             return (Subtract t e)
-                            ||| do string "toString"
-                                   e <- pFactor
-                                   return (ToString e)
-                                 ||| do o <- boolComparator
-                                        e <- pExpr
-                                        return (Compare o t e)
-                                       ||| return t
-
-=======
                ||| do string "cirA("
                       r <- pExpr
                       char ')'
@@ -306,8 +289,7 @@ pExpr = do string "abs("
                                                           e <- pExpr
                                                           return (Compare o t e)
                                                           ||| return t
-                                       
->>>>>>> 83c53c66be04478b95d1f448f8f852686bd9c890
+
 
 
 -- pFactor :: Parser Expr
