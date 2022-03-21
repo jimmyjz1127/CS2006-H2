@@ -2,6 +2,7 @@ module Expr where
 
 import Parsing
 
+
 type Name = String
 
 -- At first, 'Expr' contains only addition, conversion to strings, and integer
@@ -11,8 +12,12 @@ data Expr = Add Expr Expr
           | Mul Expr Expr
           | Div Expr Expr
           | ToString Expr
+          | Concat Expr Expr
           | Pow Expr Expr
+          | Mod Expr Expr
+          | ABS Expr
           | Val Value
+          | Compare String Expr Expr
 
   deriving Show
 
@@ -23,56 +28,81 @@ data Command = Set Name Expr -- assign an expression to a variable name
   deriving Show
 
 
-data Value = IntVal Int | StrVal String | CharVal Char | VarVal Name
+data Value = IntVal Int | StrVal String | CharVal Char | VarVal Name | BoolVal Bool
   deriving Show
 
 
-setVar :: Name -> Expr -> Command
-setVar name value = Set name value
+-- setVar :: Name -> Expr -> Command
+-- setVar name value = Set name value
+
+
+
+getValueEx :: String ->  [(Name, Value)] -> Value
+getValueEx name vars = snd(head(filter (\a -> fst(a) == name ) (vars)))
+
 
 
 
 eval :: [(Name, Value)] -> -- Variable name to value mapping
         Expr -> -- Expression to evaluate
         Maybe Value -- Result (if no errors such as missing variables)
-eval vars (Val x) = Just x -- for values, just give the value directly
+eval vars (Val x) = do
+                      case (x) of
+                        (VarVal val) -> Just (getValueEx val vars)
+                        _            -> Just x
+
+
+eval vars (Concat x y) = do
+                            let var1 = eval vars x
+                            let var2 = eval vars y
+
+                            case (var1, var2) of
+                                 ((Just (StrVal a)),(Just (StrVal b))) -> Just (StrVal (a++b))
+                                 _                                     -> Just (StrVal "Type Error")
+
 eval vars (Add x y) = do
                         let var1 = eval vars x
                         let var2 = eval vars y
-
+                        --
+                        -- case (var1, var2) of
+                        --      (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a + b))
                         case (var1, var2) of
                              (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a + b))
-
-
-
-
-
+                             _                                  -> Just (StrVal "Type Error")
 
 eval vars (Subtract x y) = do
                              let var1 = eval vars x
                              let var2 = eval vars y
 
                              case (var1, var2) of
-                               (Just (IntVal val1), Just (IntVal val2)) -> Just (IntVal (val1 - val2))
-
+                                  (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a - b))
+                                  _                                  -> Just (StrVal "Type Error")
 
 eval vars (Mul x y) = do
                         let var1 = eval vars x
                         let var2 = eval vars y
 
                         case (var1, var2) of
-                          (Just (IntVal val1), Just (IntVal val2)) -> Just (IntVal (val1 * val2))
-
+                             (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a * b))
+                             _                                  -> Just (StrVal "Type Error")
 
 eval vars (Div x y) = do
                         let var1 = eval vars x
                         let var2 = eval vars y
 
                         case (var1, var2) of
-                          (Just (IntVal val1), Just (IntVal val2)) -> if val2 /= 0
-                                                                        then do
-                                                                                let result = val1 `div` val2
-                                                                                Just (IntVal (result))
+                             (Just (IntVal a), Just (IntVal b)) -> do if b /= 0
+                                                                        then Just (IntVal (a `div` b))
+                                                                      else Just (StrVal ("Div by 0 error"))
+                             _                                  -> Just (StrVal "Type Error")
+
+eval vars (Mod x y) = do
+                        let var1 = eval vars x
+                        let var2 = eval vars y
+
+                        case (var1, var2) of
+                             (Just (IntVal a), Just (IntVal b)) -> do if b /= 0
+                                                                        then Just (IntVal (a `mod` b))
                                                                       else Just (StrVal ("Div by 0 error"))
 
 
@@ -81,21 +111,64 @@ eval vars (Pow x y) = do
                         let var2 = eval vars y
 
                         case (var1, var2) of
-                          (Just (IntVal val1), Just (IntVal val2)) -> Just (IntVal (val1^val2))
+                             (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a^b))
+                             _                                  -> Just (StrVal "Type Error")
+
+eval vars (ABS x) = do
+                        let var1 = eval vars x
+                        case var1 of
+                             Just (IntVal val1) -> do if val1 < 0
+                                                        then Just(IntVal (-val1))
+                                                      else Just(IntVal val1)
+                             _            -> Just (StrVal "Type Error")
 
 
 
 
+eval vars (ToString x) = do
+                            let var1 = eval vars x
+                            case (var1) of
+                                 Just (IntVal val1) -> Just (StrVal (show val1))
 
+eval vars (Compare o x y) = do
+                             let var1 = eval vars x
+                             let var2 = eval vars y
+                             case o of
+                               ">" -> case (var1, var2) of
+                                 (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a > b))
+                                 (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a > b))
+                                 _                                        -> Just (StrVal "Type Error")
+                               "<" -> case (var1, var2) of
+                                 (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a < b))
+                                 (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a < b))
+                                 _                                        -> Just (StrVal "Type Error")
+                               ">=" -> case (var1, var2) of
+                                 (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a >= b))
+                                 (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a >= b))
+                                 _                                        -> Just (StrVal "Type Error")
+                               "<=" -> case (var1, var2) of
+                                 (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a <= b))
+                                 (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a <= b))
+                                 _                                        -> Just (StrVal "Type Error")
+                               "==" -> case (var1, var2) of
+                                 (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a == b))
+                                 (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a == b))
+                                 _                                        -> Just (StrVal "Type Error")
+                               "/=" -> case (var1, var2) of
+                                 (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a /= b))
+                                 (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a /= b))
+                                 _                                        -> Just (StrVal "Type Error")
+                               _ -> Just (StrVal "Invalid Symbol")
 
-eval vars (ToString x) = Nothing
 
 digitToInt :: Char -> Value
 digitToInt x = IntVal (fromEnum x - fromEnum '0')
 
 pCommand :: Parser Command
 pCommand = do t <- ident
+              space
               char '='
+              space
               e <- pExpr
               return (Set t e)
             ||| do string "print"
@@ -106,25 +179,36 @@ pCommand = do t <- ident
                           return (Quit)
 
 pExpr :: Parser Expr
-pExpr = do t <- pTerm
-           do char '+'
-              e <- pExpr
-              return (Add t e)
-            ||| do char '-'
-                   e <- pExpr
-                   return (Subtract t e)
-                 ||| return t
+pExpr = do string "abs"
+           char '('
+           e <- pExpr
+           char ')'
+           return (ABS e)
+        ||| do w1 <- pFactor
+               char '+'
+               char '+'
+               w2 <- pFactor
+               return (Concat w1 w2)
+            ||| do t <- pTerm
+                   do char '+'
+                      e <- pExpr
+                      return (Add t e)
+                    ||| do char '-'
+                           e <- pExpr
+                           return (Subtract t e)
+                          ||| do boolOp <- boolComparator
+                                 e <- pExpr
+                                 return (Compare boolOp t e)
+                                ||| return t
 
 
 pFactor :: Parser Expr
-pFactor = do d <- natural
+pFactor = do d <- integer
              return (Val (IntVal d))
            ||| do v <- identifier
                   return (Val (VarVal v))
-                ||| do char '\"'
-                       e <- pExpr
-                       char '\"'
-                       return e
+                ||| do w <- stringLit
+                       return (Val (StrVal w))
                      ||| do char '('
                             e <- pExpr
                             char ')'
@@ -141,4 +225,7 @@ pTerm = do f <- pFactor
                    ||| do char '^'
                           t <- pTerm
                           return (Pow f t)
+                          ||| do char '%'
+                                 t <- pTerm
+                                 return (Mod f t)
                           ||| return f
