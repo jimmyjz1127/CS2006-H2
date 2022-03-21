@@ -3,6 +3,7 @@ module Expr where
 import Parsing
 
 
+
 type Name = String
 
 -- At first, 'Expr' contains only addition, conversion to strings, and integer
@@ -24,6 +25,7 @@ data Expr = Add Expr Expr
 -- These are the REPL commands
 data Command = Set Name Expr -- assign an expression to a variable name
              | Print Expr    -- evaluate an expression and print the result
+             | Read Expr
              | Quit
   deriving Show
 
@@ -177,13 +179,17 @@ pCommand = do t <- ident
                    return (Print e)
                    ||| do string "quit"
                           return (Quit)
-
+                          ||| do string "read"
+                                 space
+                                 e <- pExpr
+                                 return(Read e)
 pExpr :: Parser Expr
 pExpr = do string "abs"
            char '('
            e <- pExpr
            char ')'
            return (ABS e)
+<<<<<<< HEAD
         ||| do w1 <- pFactor
                char '+'
                char '+'
@@ -201,6 +207,29 @@ pExpr = do string "abs"
                                  return (Compare boolOp t e)
                                 ||| return t
 
+=======
+        ||| do string "toString"
+               e <- pFactor
+               return (ToString e)
+
+        ||| do t <- pTerm
+               do char '+'
+                  e <- pExpr
+                  return (Add t e)
+                ||| do char '-'
+                       e <- pExpr
+                       return (Subtract t e)
+                     ||| return t
+
+-- pFactor :: Parser Expr
+-- pFactor = do d <- digit
+--              return (Val (digitToInt d))
+--            ||| do v <- letter
+--                   return (Val (VarVal [v]))
+--                        e <- pExpr
+--                        char ')'
+--                        return e
+>>>>>>> 1de0ca9a9ac7030072884a74371f2351236e6f0d
 
 pFactor :: Parser Expr
 pFactor = do d <- integer

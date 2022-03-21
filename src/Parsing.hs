@@ -158,6 +158,7 @@ space                         :: Parser ()
 space                         =  do many (sat isSpace)
                                     return ()
 
+<<<<<<< HEAD
 
 boolSymbol                    :: Parser Char
 boolSymbol                    = sat isBooleanSymbol
@@ -189,6 +190,13 @@ ifclause                      = do char 'i'
 
 -- thenclause                    :: Parser String
 -- thenclause                    =  do char 't'
+=======
+stringLit                     :: Parser String
+stringLit                     = do char '\"'
+                                   word <- many alphanum
+                                   char '\"'
+                                   return word
+>>>>>>> 1de0ca9a9ac7030072884a74371f2351236e6f0d
 {-
 Ignoring spacing
 ----------------

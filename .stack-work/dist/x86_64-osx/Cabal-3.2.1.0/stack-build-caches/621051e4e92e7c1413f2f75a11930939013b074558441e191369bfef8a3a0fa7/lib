@@ -3,13 +3,21 @@
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/CS2006-H2.cabal:
   hash: b45e92f477c59b33c9a506e98b3bed261f1c2d463a2424080c764d4d4c828434
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/src/Parsing.hs:
+<<<<<<< HEAD
   hash: cce043f21f370298610f8c7dff588688bec646c44b3df0c757a2c499f512a982
+=======
+  hash: be6d253a9e62e5a9c22315c7ab09b2db674965a3c53d1a184e34e602f63c1808
+>>>>>>> 1de0ca9a9ac7030072884a74371f2351236e6f0d
 /Users/jimmyzhang/.stack/programs/x86_64-osx/ghc-8.10.7/lib/ghc-8.10.7/include/ghcversion.h:
   hash: c013160c9aa8a98f4638616496dce720c23ceca8ef9d6b3212b654642fbda5e4
 ? /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/.stack-work/dist/x86_64-osx/Cabal-3.2.1.0/build/autogen/Paths_CS2006_H2.hs
 : hash: fdae5ebee2fde6209564b4f2e79d98bc42ced96325d8145ced7fad3988b1f5d4
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/src/REPL.hs:
+<<<<<<< HEAD
   hash: b494fa2e548dbd90e7e924dd885e474361c9d12beca8bd65014ddb62f01d1abe
+=======
+  hash: fa233e1fd20665834ed0f50626f08879ed8b7f108c887b4ba54d683f7d5a06a4
+>>>>>>> 1de0ca9a9ac7030072884a74371f2351236e6f0d
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/src/Main.hs:
   hash: 9019b891ad78be928e622ae14f6e265906e58d7ea3575954b58d0b981f5173cc
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/package.yaml:
@@ -17,4 +25,8 @@
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/README.md:
   hash: 5338127cce6afb99cfa19523248d92d276bb454138ebd95b6f50d040ca619dac
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/src/Expr.hs:
+<<<<<<< HEAD
   hash: c416f57c5bdd33de237864d4cd5d4e50bbd96690ec4131793edfc736f7a69e8f
+=======
+  hash: defcf421a7df163d50d95b21ce838a43ec4f93c197829a1fde383a1e92e9a2b5
+>>>>>>> 1de0ca9a9ac7030072884a74371f2351236e6f0d
