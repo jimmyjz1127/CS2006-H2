@@ -34,14 +34,8 @@ data Value = IntVal Int | StrVal String | CharVal Char | VarVal Name | BoolVal B
   deriving Show
 
 
--- setVar :: Name -> Expr -> Command
--- setVar name value = Set name value
-
-
-
 getValueEx :: String ->  [(Name, Value)] -> Value
 getValueEx name vars = snd(head(filter (\a -> fst(a) == name ) (vars)))
-
 
 
 
