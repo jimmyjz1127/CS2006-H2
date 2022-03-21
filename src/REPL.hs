@@ -3,6 +3,7 @@ module REPL where
 import Expr
 import Parsing
 import System.IO
+import Control.Exception
 
 data LState = LState { vars :: [(Name, Value)] }
 
@@ -27,7 +28,7 @@ updateVars name value st = do
 
 
 contains :: Name ->  LState -> Bool
-contains name st = length (filter (\a -> fst(a) == name ) (vars st)) > 0
+contains name st = (length (filter (\a -> fst(a) == name ) (vars st))) > 0
 
 getValue :: String ->  LState -> Value
 getValue name st = do if contains name st
@@ -46,7 +47,10 @@ dropVar name st = do
 process :: LState -> Command -> IO ()
 process st (Set name e) =
   case (eval (vars st) e) of
-    Just (VarVal val) -> repl (updateVars name (getValue val st) st)
+    Just (VarVal val) -> do if (contains val st)
+                               then repl (updateVars name (getValue val st) st)
+                            else do putStrLn("Variable not assigned yet")
+                                    repl st
     Just val -> repl (updateVars name val st)
     Nothing  -> repl st
 process st (Print e) =
