@@ -138,7 +138,7 @@ eval vars (Pow x y) = do
                              (Just (FloatVal a), Just (IntVal b))   -> Just (FloatVal (a^b))
                              (Just (IntVal a), Just (FloatVal b))   -> Just (FloatVal (fromIntegral a**b))
                              (Just (FloatVal a), Just (FloatVal b)) -> Just (FloatVal (a**b))
-                             _                                  -> Just (StrVal "Type Error pow")
+                             _                                  -> Just (StrVal "Type Error")
 
 eval vars (ABS x) = do
                         let var1 = eval vars x
@@ -258,6 +258,7 @@ pExpr = do string "abs"
                                         e <- pExpr
                                         return (Compare o t e)
                                        ||| return t
+                                       
 
 
 -- pFactor :: Parser Expr
