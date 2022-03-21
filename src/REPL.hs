@@ -66,10 +66,10 @@ process st (Print e) =
 process st (Quit) = putStrLn("Quitting Program...")
 
 
-process st (Read e) = do case (eval (vars st) e) of
-                              Just (StrVal val) -> do file <- readFile e
-                                                      let content = lines file
-                                                      foldr (replf st)
+-- process st (Read e) = do case (eval (vars st) e) of
+--                               Just (StrVal val) -> do file <- readFile e
+--                                                       let content = lines file
+--                                                       foldr (replf st)
 
 
 
@@ -90,7 +90,7 @@ repl st = do putStr ("> ")
                           repl st
 
 
-replf :: LState -> [String] -> IO ()
-replf st inp = do case parse pCommand inp of
-                          [(cmd, "")] -> process st cmd
-                          _ -> do putStrLn "Parse error"
+-- replf :: LState -> [String] -> IO ()
+-- replf st inp = do case parse pCommand inp of
+--                           [(cmd, "")] -> process st cmd
+--                           _ -> do putStrLn "Parse error"

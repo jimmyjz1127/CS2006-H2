@@ -189,7 +189,6 @@ pExpr = do string "abs"
            e <- pExpr
            char ')'
            return (ABS e)
-<<<<<<< HEAD
         ||| do w1 <- pFactor
                char '+'
                char '+'
@@ -202,24 +201,14 @@ pExpr = do string "abs"
                     ||| do char '-'
                            e <- pExpr
                            return (Subtract t e)
-                          ||| do boolOp <- boolComparator
-                                 e <- pExpr
-                                 return (Compare boolOp t e)
-                                ||| return t
+                          ||| do string "toString"
+                                 e <- pFactor
+                                 return (ToString e)
+                               ||| do boolOp <- boolComparator
+                                      e <- pExpr
+                                      return (Compare boolOp t e)
+                                     ||| return t
 
-=======
-        ||| do string "toString"
-               e <- pFactor
-               return (ToString e)
-
-        ||| do t <- pTerm
-               do char '+'
-                  e <- pExpr
-                  return (Add t e)
-                ||| do char '-'
-                       e <- pExpr
-                       return (Subtract t e)
-                     ||| return t
 
 -- pFactor :: Parser Expr
 -- pFactor = do d <- digit
@@ -229,7 +218,6 @@ pExpr = do string "abs"
 --                        e <- pExpr
 --                        char ')'
 --                        return e
->>>>>>> 1de0ca9a9ac7030072884a74371f2351236e6f0d
 
 pFactor :: Parser Expr
 pFactor = do d <- integer
