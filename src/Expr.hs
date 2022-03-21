@@ -18,6 +18,7 @@ data Expr = Add Expr Expr
           | Mod Expr Expr
           | ABS Expr
           | Val Value
+          | Compare String Expr Expr
 
   deriving Show
 
@@ -29,12 +30,12 @@ data Command = Set Name Expr -- assign an expression to a variable name
   deriving Show
 
 
-data Value = IntVal Int | StrVal String | CharVal Char | VarVal Name
+data Value = IntVal Int | StrVal String | CharVal Char | VarVal Name | BoolVal Bool
   deriving Show
 
 
-setVar :: Name -> Expr -> Command
-setVar name value = Set name value
+-- setVar :: Name -> Expr -> Command
+-- setVar name value = Set name value
 
 
 
@@ -47,7 +48,11 @@ getValueEx name vars = snd(head(filter (\a -> fst(a) == name ) (vars)))
 eval :: [(Name, Value)] -> -- Variable name to value mapping
         Expr -> -- Expression to evaluate
         Maybe Value -- Result (if no errors such as missing variables)
-eval vars (Val x) = Just x -- for values, just give the value directly
+eval vars (Val x) = do
+                      case (x) of
+                        (VarVal val) -> Just (getValueEx val vars)
+                        _            -> Just x
+
 
 eval vars (Concat x y) = do
                             let var1 = eval vars x
@@ -55,40 +60,13 @@ eval vars (Concat x y) = do
 
                             case (var1, var2) of
                                  ((Just (StrVal a)),(Just (StrVal b))) -> Just (StrVal (a++b))
-                                 ((Just (VarVal a)), (Just (StrVal b))) -> do let val1 = getValueEx a vars
-                                                                              case val1 of
-                                                                                   (StrVal w1) -> Just (StrVal (w1 ++ b))
-                                 ((Just (StrVal a)), (Just (VarVal b))) -> do let val2 = getValueEx b vars
-                                                                              case val2 of
-                                                                                   (StrVal w2) -> Just (StrVal (a ++ w2))
-                                 ((Just (VarVal a)), (Just (VarVal b))) -> do
-                                                                             let val1 = getValueEx a vars
-                                                                             let val2 = getValueEx b vars
-                                                                             case (val1,val2) of
-                                                                                  (StrVal w1, StrVal w2) -> Just (StrVal (w1 ++ w2))
-
+                                 _                                     -> Just (StrVal "Type Error")
 
 eval vars (Add x y) = do
                         let var1 = eval vars x
                         let var2 = eval vars y
-                        --
-                        -- case (var1, var2) of
-                        --      (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a + b))
                         case (var1, var2) of
                              (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a + b))
-                             (Just (VarVal a), Just (IntVal b)) -> do let val1 = getValueEx a vars
-                                                                      case val1 of
-                                                                          (IntVal val1_1) -> Just (IntVal (val1_1 + b))
-
-                             (Just (IntVal a), Just (VarVal b)) -> do let val2 = getValueEx b vars
-                                                                      case val2 of
-                                                                          (IntVal val2_2) -> Just (IntVal (a + val2_2))
-
-                             (Just (VarVal a), Just (VarVal b)) -> do let val1 = getValueEx a vars
-                                                                      let val2 = getValueEx b vars
-                                                                      case (val1,val2) of
-                                                                           ((IntVal val1_1),  (IntVal val2_2)) -> Just (IntVal (val1_1 + val2_2))
-
                              _                                  -> Just (StrVal "Type Error")
 
 eval vars (Subtract x y) = do
@@ -97,19 +75,6 @@ eval vars (Subtract x y) = do
 
                              case (var1, var2) of
                                   (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a - b))
-                                  (Just (VarVal a), Just (IntVal b)) -> do let val1 = getValueEx a vars
-                                                                           case val1 of
-                                                                               (IntVal val1_1) -> Just (IntVal (val1_1 - b))
-
-                                  (Just (IntVal a), Just (VarVal b)) -> do let val2 = getValueEx b vars
-                                                                           case val2 of
-                                                                               (IntVal val2_2) -> Just (IntVal (a - val2_2))
-
-                                  (Just (VarVal a), Just (VarVal b)) -> do let val1 = getValueEx a vars
-                                                                           let val2 = getValueEx b vars
-                                                                           case (val1,val2) of
-                                                                                ((IntVal val1_1),  (IntVal val2_2)) -> Just (IntVal (val1_1 - val2_2))
-
                                   _                                  -> Just (StrVal "Type Error")
 
 eval vars (Mul x y) = do
@@ -118,18 +83,7 @@ eval vars (Mul x y) = do
 
                         case (var1, var2) of
                              (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a * b))
-                             (Just (VarVal a), Just (IntVal b)) -> do let val1 = getValueEx a vars
-                                                                      case val1 of
-                                                                          (IntVal val1_1) -> Just (IntVal (val1_1 * b))
-
-                             (Just (IntVal a), Just (VarVal b)) -> do let val2 = getValueEx b vars
-                                                                      case val2 of
-                                                                          (IntVal val2_2) -> Just (IntVal (a * val2_2))
-
-                             (Just (VarVal a), Just (VarVal b)) -> do let val1 = getValueEx a vars
-                                                                      let val2 = getValueEx b vars
-                                                                      case (val1,val2) of
-                                                                           ((IntVal val1_1),  (IntVal val2_2)) -> Just (IntVal (val1_1 * val2_2))
+                             _                                  -> Just (StrVal "Type Error")
 
 eval vars (Div x y) = do
                         let var1 = eval vars x
@@ -139,28 +93,6 @@ eval vars (Div x y) = do
                              (Just (IntVal a), Just (IntVal b)) -> do if b /= 0
                                                                         then Just (IntVal (a `div` b))
                                                                       else Just (StrVal ("Div by 0 error"))
-
-                             (Just (VarVal a), Just (IntVal b)) -> do if b /= 0
-                                                                         then do let val1 = getValueEx a vars
-                                                                                 case val1 of
-                                                                                      (IntVal val1_1) -> Just (IntVal (val1_1 `div` b))
-                                                                      else Just (StrVal ("Div by 0 error"))
-
-
-
-                             (Just (IntVal a), Just (VarVal b)) -> do let val2 = getValueEx b vars
-                                                                      case val2 of
-                                                                          (IntVal val2_2) -> do if val2_2 /= 0
-                                                                                                  then Just (IntVal (a `div` val2_2))
-                                                                                                else Just (StrVal ("Div by 0 error"))
-
-                             (Just (VarVal a), Just (VarVal b)) -> do let val1 = getValueEx a vars
-                                                                      let val2 = getValueEx b vars
-                                                                      case (val1,val2) of
-                                                                           ((IntVal val1_1),  (IntVal val2_2)) -> do if val2_2 /= 0
-                                                                                                                        then Just (IntVal (val1_1 `div` val2_2))
-                                                                                                                     else Just (StrVal ("Div by 0 error"))
-
                              _                                  -> Just (StrVal "Type Error")
 
 eval vars (Mod x y) = do
@@ -172,28 +104,6 @@ eval vars (Mod x y) = do
                                                                         then Just (IntVal (a `mod` b))
                                                                       else Just (StrVal ("Div by 0 error"))
 
-                             (Just (VarVal a), Just (IntVal b)) -> do if b /= 0
-                                                                         then do let val1 = getValueEx a vars
-                                                                                 case val1 of
-                                                                                      (IntVal val1_1) -> Just (IntVal (val1_1 `mod` b))
-                                                                      else Just (StrVal ("Div by 0 error"))
-
-
-
-                             (Just (IntVal a), Just (VarVal b)) -> do let val2 = getValueEx b vars
-                                                                      case val2 of
-                                                                          (IntVal val2_2) -> do if val2_2 /= 0
-                                                                                                  then Just (IntVal (a `mod` val2_2))
-                                                                                                else Just (StrVal ("Div by 0 error"))
-
-                             (Just (VarVal a), Just (VarVal b)) -> do let val1 = getValueEx a vars
-                                                                      let val2 = getValueEx b vars
-                                                                      case (val1,val2) of
-                                                                           ((IntVal val1_1),  (IntVal val2_2)) -> do if val2_2 /= 0
-                                                                                                                        then Just (IntVal (val1_1 `mod` val2_2))
-                                                                                                                     else Just (StrVal ("Div by 0 error"))
-
-
 
 eval vars (Pow x y) = do
                         let var1 = eval vars x
@@ -201,19 +111,6 @@ eval vars (Pow x y) = do
 
                         case (var1, var2) of
                              (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a^b))
-                             (Just (VarVal a), Just (IntVal b)) -> do let val1 = getValueEx a vars
-                                                                      case val1 of
-                                                                          (IntVal val1_1) -> Just (IntVal (val1_1^b))
-
-                             (Just (IntVal a), Just (VarVal b)) -> do let val2 = getValueEx b vars
-                                                                      case val2 of
-                                                                          (IntVal val2_2) -> Just (IntVal (a^val2_2))
-
-                             (Just (VarVal a), Just (VarVal b)) -> do let val1 = getValueEx a vars
-                                                                      let val2 = getValueEx b vars
-                                                                      case (val1,val2) of
-                                                                           ((IntVal val1_1),  (IntVal val2_2)) -> Just (IntVal (val1_1^val2_2))
-
                              _                                  -> Just (StrVal "Type Error")
 
 eval vars (ABS x) = do
@@ -232,26 +129,40 @@ eval vars (ToString x) = do
                             case (var1) of
                                  Just (IntVal val1) -> Just (StrVal (show val1))
 
+eval vars (Compare o x y) = do
+                             let var1 = eval vars x
+                             let var2 = eval vars y
+                             case o of
+                               ">" -> case (var1, var2) of
+                                 (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a > b))
+                                 (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a > b))
+                                 _                                        -> Just (StrVal "Type Error")
+                               "<" -> case (var1, var2) of
+                                 (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a < b))
+                                 (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a < b))
+                                 _                                        -> Just (StrVal "Type Error")
+                               ">=" -> case (var1, var2) of
+                                 (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a >= b))
+                                 (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a >= b))
+                                 _                                        -> Just (StrVal "Type Error")
+                               "<=" -> case (var1, var2) of
+                                 (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a <= b))
+                                 (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a <= b))
+                                 _                                        -> Just (StrVal "Type Error")
+                               "==" -> case (var1, var2) of
+                                 (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a == b))
+                                 (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a == b))
+                                 _                                        -> Just (StrVal "Type Error")
+                               "/=" -> case (var1, var2) of
+                                 (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a /= b))
+                                 (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a /= b))
+                                 _                                        -> Just (StrVal "Type Error")
+                               _ -> Just (StrVal "Invalid Symbol")
 
 
 digitToInt :: Char -> Value
 digitToInt x = IntVal (fromEnum x - fromEnum '0')
 
--- pCommand :: Parser Command
--- pCommand = do t <- ident
---               char '='
---               e <- pExpr
---               return (Set t e)
---             ||| do string "print"
---                    space
---                    e <- pExpr
---                    return (Print e)
---                    ||| do string "quit"
---                           return (Quit)
---                           ||| do string "read"
---                                  space
---                                  e <- pExpr
---                                  return(Read e)
 pCommand :: Parser Command
 pCommand = do t <- ident
               space
@@ -263,31 +174,38 @@ pCommand = do t <- ident
                    space
                    e <- pExpr
                    return (Print e)
-                 ||| do string "quit"
-                        return (Quit)
-                      ||| do string "read"
-                             space
-                             e <- pExpr
-                             return (Read e)
-
+                   ||| do string "quit"
+                          return (Quit)
+                          ||| do string "read"
+                                 space
+                                 e <- pExpr
+                                 return(Read e)
 pExpr :: Parser Expr
 pExpr = do string "abs"
            char '('
            e <- pExpr
            char ')'
            return (ABS e)
-           ||| do w1 <- pFactor
-                  char '&'
-                  w2 <- pFactor
-                  return (Concat w1 w2)
-                  ||| do t <- pTerm
-                         do char '+'
-                            e <- pExpr
-                            return (Add t e)
-                            ||| do char '-'
-                                   e <- pExpr
-                                   return (Subtract t e)
-                                   ||| return t
+        ||| do w1 <- pFactor
+               char '+'
+               char '+'
+               w2 <- pFactor
+               return (Concat w1 w2)
+            ||| do t <- pTerm
+                   do char '+'
+                      e <- pExpr
+                      return (Add t e)
+                    ||| do char '-'
+                           e <- pExpr
+                           return (Subtract t e)
+                          ||| do string "toString"
+                                 e <- pFactor
+                                 return (ToString e)
+                               ||| do boolOp <- boolComparator
+                                      e <- pExpr
+                                      return (Compare boolOp t e)
+                                     ||| return t
+
 
 -- pFactor :: Parser Expr
 -- pFactor = do d <- digit
@@ -301,16 +219,14 @@ pExpr = do string "abs"
 pFactor :: Parser Expr
 pFactor = do d <- integer
              return (Val (IntVal d))
-             ||| do v <- identifier
-                    return (Val (VarVal v))
-                    ||| do char '\"'
-                           e <- pExpr
-                           char '\"'
-                           return e
-                           ||| do char '('
-                                  e <- pExpr
-                                  char ')'
-                                  return e
+           ||| do v <- identifier
+                  return (Val (VarVal v))
+                ||| do w <- stringLit
+                       return (Val (StrVal w))
+                     ||| do char '('
+                            e <- pExpr
+                            char ')'
+                            return e
 
 pTerm :: Parser Expr
 pTerm = do f <- pFactor

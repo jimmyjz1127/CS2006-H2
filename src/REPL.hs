@@ -49,19 +49,18 @@ process st (Set name e) =
     Just (VarVal val) -> repl (updateVars name (getValue val st) st)
     Just val -> repl (updateVars name val st)
     Nothing  -> repl st
-  -- st' should include the variable set to the result of evaluating e
-
 process st (Print e) =
     do
       case (eval (vars st) e) of
-            -- Just (NameVal name) -> putStrLn(show (getValue name st))
             Just (IntVal val)  -> putStrLn(show val)
             Just (StrVal val)  -> putStrLn(val)
             Just (CharVal val) -> putStrLn(show val)
+            Just (BoolVal val) -> putStrLn(show val)
             Just (VarVal var)  -> case (getValue var st) of
                  (IntVal val)  -> putStrLn(show val)
                  (CharVal val) -> putStrLn(show val)
                  (StrVal val)  -> putStrLn(val)
+                 (BoolVal val) -> putStrLn(show val)
             Nothing -> putStrLn("")
       repl st
 process st (Quit) = putStrLn("Quitting Program...")
@@ -73,7 +72,6 @@ process st (Read e) = do case (eval (vars st) e) of
                                                       replf st content
                               _                 -> do putStrLn ("Error")
                                                       repl st
-
 
 --------------------------------------------------------------------------------
 processf :: LState -> Command  -> [String] -> IO ()
@@ -103,9 +101,6 @@ processf st (Quit) inp = putStrLn("Quitting Program...")
 
 
 
-
-
-
 -- Read, Eval, Print Loop
 -- This reads and parses the input using the pCommand parser, and calls
 -- 'process' to process the command.
@@ -124,8 +119,8 @@ repl st = do putStr ("> ")
 replf :: LState -> [String] -> IO ()
 replf st inp = do if (length inp) /= 0
                      then do
-                            putStrLn("Input: " ++ (head inp)) --Remove
+                            putStrLn("Line: " ++ (head inp)) --Remove
                             case parse pCommand (head inp) of
-                                 [(cmd, "")] -> do processf st cmd inp
+                                 [(cmd, "")] -> do processf st cmd (tail inp)
                                  _ -> do putStrLn "Parse error"
                   else repl st
