@@ -27,6 +27,7 @@ data Command = Set Name Expr -- assign an expression to a variable name
              | Print Expr    -- evaluate an expression and print the result
              | Read Expr
              | Quit
+             | IfThen Expr Command
   deriving Show
 
 
@@ -153,6 +154,17 @@ eval vars (Compare o x y) = do
                                  _                                        -> Just (StrVal "Type Error")
                                _ -> Just (StrVal "Invalid Symbol")
 
+-- eval vars (IfThen c a) = do
+--                            let condition = eval vars c
+--                            -- let action = eval vars a
+--
+--                            case (condition) of
+--                              (Just (BoolVal val)) -> do
+--                                                        case val of
+--                                                          True -> eval vars a
+--                                                          False -> Nothing
+--                              _                    -> Just (StrVal "Invalid Condition")
+
 
 digitToInt :: Char -> Value
 digitToInt x = IntVal (fromEnum x - fromEnum '0')
@@ -174,6 +186,18 @@ pCommand = do t <- ident
                                  space
                                  e <- pExpr
                                  return(Read e)
+                                 ||| do string "if"
+                                        space
+                                        char '('
+                                        condition <- pExpr
+                                        char ')'
+                                        space
+                                        string "then"
+                                        space
+                                        char '('
+                                        action <- pCommand
+                                        char ')'
+                                        return (IfThen condition action)
 pExpr :: Parser Expr
 pExpr = do string "abs"
            char '('
@@ -185,20 +209,20 @@ pExpr = do string "abs"
                char '+'
                w2 <- pFactor
                return (Concat w1 w2)
-            ||| do t <- pTerm
-                   do char '+'
-                      e <- pExpr
-                      return (Add t e)
-                    ||| do char '-'
-                           e <- pExpr
-                           return (Subtract t e)
-                          ||| do string "toString"
-                                 e <- pFactor
-                                 return (ToString e)
-                               ||| do boolOp <- boolComparator
-                                      e <- pExpr
-                                      return (Compare boolOp t e)
-                                     ||| return t
+              ||| do t <- pTerm
+                     do char '+'
+                        e <- pExpr
+                        return (Add t e)
+                      ||| do char '-'
+                             e <- pExpr
+                             return (Subtract t e)
+                            ||| do string "toString"
+                                   e <- pFactor
+                                   return (ToString e)
+                                 ||| do o <- boolComparator
+                                        e <- pExpr
+                                        return (Compare o t e)
+                                       ||| return t
 
 
 -- pFactor :: Parser Expr

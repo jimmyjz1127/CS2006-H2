@@ -72,6 +72,16 @@ process st (Read e) = do case (eval (vars st) e) of
                                                       replf st content
                               _                 -> do putStrLn ("Error")
                                                       repl st
+process st (IfThen c a) = do
+                             let var = eval (vars st) c
+
+                             case var of
+                               Just (BoolVal x) -> do
+                                                     case x of
+                                                       True -> process st a
+                                                       False -> do repl st
+                               _                -> putStrLn("Invalid Condition")
+
 
 --------------------------------------------------------------------------------
 processf :: LState -> Command  -> [String] -> IO ()

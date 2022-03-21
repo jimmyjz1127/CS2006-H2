@@ -55,9 +55,6 @@ Auxiliary functions
 isPrintable                   :: Char -> Bool
 isPrintable x                 = (&&) (isPrint x) (x /= '\"')
 
-isCondition                   :: Char -> Bool
-isCondition x                 = (&&) (isAlphaNum x) (isSymbol x)
-
 
 --Takes a symbol and returns True if the symbol is of a boolean symbol used for boolean comparations
 isBooleanSymbol             :: Char -> Bool
@@ -125,6 +122,7 @@ printable                     =  sat isPrintable
 char                          :: Char -> Parser Char
 char x                        =  sat (== x)
 
+
 string                        :: String -> Parser String
 string []                     =  return []
 string (x:xs)                 =  do char x
@@ -175,20 +173,6 @@ stringLit                     = do char '\"'
                                    char '\"'
                                    return word
 
-condition                     :: Parser Char
-condition                     =  sat isCondition
-
-ifclause                      :: Parser String
-ifclause                      = do char 'i'
-                                   char 'f'
-                                   space
-                                   char '('
-                                   p <- many condition
-                                   char ')'
-                                   return p
-
--- thenclause                    :: Parser String
--- thenclause                    =  do char 't'
 
 {-
 Ignoring spacing
