@@ -83,7 +83,7 @@ eval vars (Subtract x y) = do
                              case (var1, var2) of
                                   (Just (IntVal a), Just (IntVal b)) -> Just (IntVal (a - b))
                                   (Just (IntVal a), Just (FloatVal b))     -> Just (FloatVal (fromIntegral a -  b))
-                                  (Just (FloatVal a), Just (IntVal b))     -> Just (FloatVal ( a - fromIntegral b))                                  
+                                  (Just (FloatVal a), Just (IntVal b))     -> Just (FloatVal ( a - fromIntegral b))
                                   (Just (FloatVal a), Just (FloatVal b))   -> Just (FloatVal ( a -  b))
                                   _                                  -> Just (StrVal "Type Error")
 
@@ -113,7 +113,7 @@ eval vars (Div x y) = do
 
                              (Just (FloatVal a), Just (IntVal b)) -> do if b /= 0
                                                                           then Just (FloatVal ( a / fromIntegral b))
-                                                                        else Just (StrVal ("Div by 0 error"))  
+                                                                        else Just (StrVal ("Div by 0 error"))
 
                              (Just (FloatVal a), Just (FloatVal b)) -> do if b /= 0
                                                                              then Just (FloatVal ( a /  b))
@@ -152,21 +152,21 @@ eval vars (ABS x) = do
                                                       else Just(IntVal val1)
                              Just (FloatVal val1) -> do if val1 < 0
                                                           then Just(FloatVal (-val1))
-                                                        else Just(FloatVal val1)                                                      
+                                                        else Just(FloatVal val1)
                              _            -> Just (StrVal "Type Error")
 
 eval vars (CirA x) = do
                         let var1 = eval vars x
                         case var1 of
                              Just (IntVal val1)   -> Just (FloatVal (pi * (fromIntegral val1**2)) )
-                             Just (FloatVal val1) -> Just (FloatVal ((pi * (val1**2))) )                                                    
+                             Just (FloatVal val1) -> Just (FloatVal ((pi * (val1**2))) )
                              _            -> Just (StrVal "Type Error")
 
 eval vars (Swap x) = do
                         let var1 = eval vars x
                         case var1 of
                              Just (IntVal val1)   -> Just (FloatVal (fromIntegral val1))
-                             Just (FloatVal val1) -> Just (IntVal ( round val1) )                                                    
+                             Just (FloatVal val1) -> Just (IntVal ( round val1) )
                              _            -> Just (StrVal "Type Error")
 
 
@@ -240,7 +240,7 @@ pCommand = do t <- ident
                                  space
                                  e <- pExpr
                                  return(Read e)
-                                ||| do string "if"
+                                ||| do string "if" -- for if-then-else construct
                                        space
                                        char '('
                                        condition <- pExpr
@@ -258,7 +258,7 @@ pCommand = do t <- ident
                                        action2 <- pCommand
                                        char ')'
                                        return (IfThen condition [action1, action2])
-                                       ||| do string "if"
+                                       ||| do string "if" -- for if-then construct
                                               space
                                               char '('
                                               condition <- pExpr
@@ -334,7 +334,7 @@ pFactor = do f <- float
                                          e <- pExpr
                                          char ')'
                                          return e
-                          
+
 
 pTerm :: Parser Expr
 pTerm = do f <- pFactor
