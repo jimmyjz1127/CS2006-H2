@@ -13,6 +13,8 @@ data Expr = Add Expr Expr
           | Mul Expr Expr
           | Div Expr Expr
           | ToString Expr
+          | ToInt Expr
+          | ToFloat Expr
           | Concat Expr Expr
           | Pow Expr Expr
           | Mod Expr Expr
@@ -174,6 +176,18 @@ eval vars (ToString x) = do
                                  Just (IntVal val1)  -> Just (StrVal (show val1))
                                  Just (FloatVal val1)-> Just (StrVal (show val1))
 
+eval vars (ToInt x) = do
+                            let var1 = eval vars x
+                            case (var1) of
+                                 Just (StrVal val1)  -> Just (IntVal  (round (read val1)))
+                                 _                   -> Just (StrVal ("Type error"))
+
+eval vars (ToFloat x) = do
+                            let var1 = eval vars x
+                            case (var1) of
+                                 Just (StrVal val1)  -> Just (FloatVal (read val1 :: Float))
+                                 _                   -> Just (StrVal ("Type error"))
+
 eval vars (Compare o x y) = do
                              let var1 = eval vars x
                              let var2 = eval vars y
@@ -278,17 +292,23 @@ pExpr = do string "abs("
                              ||| do string "toString"
                                     e <- pFactor
                                     return (ToString e)
-                                  ||| do t <- pTerm
-                                         do char '+'
-                                            e <- pExpr
-                                            return (Add t e)
-                                            ||| do char '-'
-                                                   e <- pExpr
-                                                   return (Subtract t e)
-                                                   ||| do o <- boolComparator
-                                                          e <- pExpr
-                                                          return (Compare o t e)
-                                                          ||| return t
+                                    ||| do string "toInt"
+                                           e <- pFactor
+                                           return (ToInt e)
+                                           ||| do string "toFloat"
+                                                  e <- pFactor
+                                                  return (ToFloat e)
+                                                  ||| do t <- pTerm  --a function b
+                                                         do char '+'
+                                                            e <- pExpr
+                                                            return (Add t e)
+                                                            ||| do char '-'
+                                                                   e <- pExpr
+                                                                   return (Subtract t e)
+                                                                   ||| do o <- boolComparator
+                                                                          e <- pExpr
+                                                                          return (Compare o t e)
+                                                                          ||| return t
 
 
 
