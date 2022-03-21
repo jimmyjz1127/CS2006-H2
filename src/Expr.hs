@@ -27,7 +27,7 @@ data Command = Set Name Expr -- assign an expression to a variable name
              | Print Expr    -- evaluate an expression and print the result
              | Read Expr
              | Quit
-             | IfThen Expr Command
+             | IfThen Expr [Command]
   deriving Show
 
 
@@ -189,16 +189,6 @@ eval vars (Compare o x y) = do
                                  _                                        -> Just (StrVal "Type Error")
                                _ -> Just (StrVal "Invalid Symbol")
 
--- eval vars (IfThen c a) = do
---                            let condition = eval vars c
---                            -- let action = eval vars a
---
---                            case (condition) of
---                              (Just (BoolVal val)) -> do
---                                                        case val of
---                                                          True -> eval vars a
---                                                          False -> Nothing
---                              _                    -> Just (StrVal "Invalid Condition")
 
 
 digitToInt :: Char -> Value
@@ -221,18 +211,37 @@ pCommand = do t <- ident
                                  space
                                  e <- pExpr
                                  return(Read e)
-                                 ||| do string "if"
-                                        space
-                                        char '('
-                                        condition <- pExpr
-                                        char ')'
-                                        space
-                                        string "then"
-                                        space
-                                        char '('
-                                        action <- pCommand
-                                        char ')'
-                                        return (IfThen condition action)
+                                ||| do string "if"
+                                       space
+                                       char '('
+                                       condition <- pExpr
+                                       char ')'
+                                       space
+                                       string "then"
+                                       space
+                                       char '('
+                                       action1 <- pCommand
+                                       char ')'
+                                       space
+                                       string "else"
+                                       space
+                                       char '('
+                                       action2 <- pCommand
+                                       char ')'
+                                       return (IfThen condition [action1, action2])
+                                       ||| do string "if"
+                                              space
+                                              char '('
+                                              condition <- pExpr
+                                              char ')'
+                                              space
+                                              string "then"
+                                              space
+                                              char '('
+                                              action1 <- pCommand
+                                              char ')'
+                                              return (IfThen condition [action1])
+
 pExpr :: Parser Expr
 pExpr = do string "abs"
            char '('
