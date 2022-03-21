@@ -119,8 +119,8 @@ repl st = do putStr ("> ")
 replf :: LState -> [String] -> IO ()
 replf st inp = do if (length inp) /= 0
                      then do
-                            putStrLn("Input: " ++ (head inp)) --Remove
+                            putStrLn("Line: " ++ (head inp)) --Remove
                             case parse pCommand (head inp) of
-                                 [(cmd, "")] -> do processf st cmd inp
+                                 [(cmd, "")] -> do processf st cmd (tail inp)
                                  _ -> do putStrLn "Parse error"
                   else repl st
