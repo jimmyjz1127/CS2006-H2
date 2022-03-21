@@ -136,9 +136,9 @@ eval vars (Pow x y) = do
                         case (var1, var2) of
                              (Just (IntVal a), Just (IntVal b))     -> Just (IntVal (a^b))
                              (Just (FloatVal a), Just (IntVal b))   -> Just (FloatVal (a^b))
-                             (Just (IntVal a), Just (FloatVal b))   -> Just (FloatVal (a**b))
+                             (Just (IntVal a), Just (FloatVal b))   -> Just (FloatVal (fromIntegral a**b))
                              (Just (FloatVal a), Just (FloatVal b)) -> Just (FloatVal (a**b))
-                             _                                  -> Just (StrVal "Type Error")
+                             _                                  -> Just (StrVal "Type Error pow")
 
 eval vars (ABS x) = do
                         let var1 = eval vars x
