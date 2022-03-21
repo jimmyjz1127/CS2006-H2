@@ -56,10 +56,12 @@ process st (Print e) =
             Just (IntVal val)  -> putStrLn(show val)
             Just (StrVal val)  -> putStrLn(val)
             Just (CharVal val) -> putStrLn(show val)
+            Just (BoolVal val) -> putStrLn(show val)
             Just (VarVal var)  -> case (getValue var st) of
                  (IntVal val)  -> putStrLn(show val)
                  (CharVal val) -> putStrLn(show val)
                  (StrVal val)  -> putStrLn(val)
+                 (BoolVal val) -> putStrLn(show val)
             Nothing -> putStrLn("")
       repl st
 process st (Quit) = putStrLn("Quitting Program...")

@@ -54,6 +54,24 @@ Auxiliary functions
 isPrintable                   :: Char -> Bool
 isPrintable x                 = (&&) (isPrint x) (x /= '\"')
 
+isCondition                   :: Char -> Bool
+isCondition x                 = (&&) (isAlphaNum x) (isSymbol x)
+
+{-
+Takes a symbol and returns True if the symbol is of a boolean symbol used for boolean comparations
+-}
+isBooleanSymbol             :: Char -> Bool
+isBooleanSymbol x           = do
+                                   let arr = ["<", ">", "=", "/"]
+                                   (has [x] arr)
+
+{-
+A contains function : takes a String element and a String list and returns True if the element is contained in the list
+-}
+has                      :: String -> [String] -> Bool
+has x arr                = length (filter (\a -> a == x) (arr)) > 0
+
+
 {-
 Basic parsers
 -------------
@@ -141,11 +159,36 @@ space                         :: Parser ()
 space                         =  do many (sat isSpace)
                                     return ()
 
+
+boolSymbol                    :: Parser Char
+boolSymbol                    = sat isBooleanSymbol
+
+boolComparator                :: Parser String
+boolComparator                =  do space
+                                    operator <- many1 boolSymbol
+                                    space
+                                    return operator
+
 stringLit                     :: Parser String
 stringLit                     = do char '\"'
                                    word <- many printable
                                    char '\"'
                                    return word
+
+condition                     :: Parser Char
+condition                     =  sat isCondition
+
+ifclause                      :: Parser String
+ifclause                      = do char 'i'
+                                   char 'f'
+                                   space
+                                   char '('
+                                   p <- many condition
+                                   char ')'
+                                   return p
+
+-- thenclause                    :: Parser String
+-- thenclause                    =  do char 't'
 {-
 Ignoring spacing
 ----------------

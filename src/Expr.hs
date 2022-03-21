@@ -17,6 +17,7 @@ data Expr = Add Expr Expr
           | Mod Expr Expr
           | ABS Expr
           | Val Value
+          | Compare String Expr Expr
 
   deriving Show
 
@@ -27,7 +28,7 @@ data Command = Set Name Expr -- assign an expression to a variable name
   deriving Show
 
 
-data Value = IntVal Int | StrVal String | CharVal Char | VarVal Name
+data Value = IntVal Int | StrVal String | CharVal Char | VarVal Name | BoolVal Bool
   deriving Show
 
 
@@ -45,7 +46,11 @@ getValueEx name vars = snd(head(filter (\a -> fst(a) == name ) (vars)))
 eval :: [(Name, Value)] -> -- Variable name to value mapping
         Expr -> -- Expression to evaluate
         Maybe Value -- Result (if no errors such as missing variables)
-eval vars (Val x) = Just x -- for values, just give the value directly
+eval vars (Val x) = do
+                      case (x) of
+                        (VarVal val) -> Just (getValueEx val vars)
+                        _            -> Just x
+
 
 eval vars (Concat x y) = do
                             let var1 = eval vars x
@@ -82,8 +87,7 @@ eval vars (Add x y) = do
                                                                           (IntVal val2_2) -> Just (IntVal (a + val2_2))
 
                              (Just (VarVal a), Just (VarVal b)) -> do let val1 = getValueEx a vars
-                                                                      let val2 = getValueEx b vars
-                                                                      case (val1,val2) of
+                                                                      let val2 = getValueEx b vars                             --                                          case (val1,val2) of
                                                                            ((IntVal val1_1),  (IntVal val2_2)) -> Just (IntVal (val1_1 + val2_2))
 
                              _                                  -> Just (StrVal "Type Error")
@@ -229,6 +233,35 @@ eval vars (ToString x) = do
                             case (var1) of
                                  Just (IntVal val1) -> Just (StrVal (show val1))
 
+eval vars (Compare o x y) = do
+                             let var1 = eval vars x
+                             let var2 = eval vars y
+                             case o of
+                               ">" -> case (var1, var2) of
+                                 (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a > b))
+                                 (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a > b))
+                                 _                                        -> Just (StrVal "Type Error")
+                               "<" -> case (var1, var2) of
+                                 (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a < b))
+                                 (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a < b))
+                                 _                                        -> Just (StrVal "Type Error")
+                               ">=" -> case (var1, var2) of
+                                 (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a >= b))
+                                 (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a >= b))
+                                 _                                        -> Just (StrVal "Type Error")
+                               "<=" -> case (var1, var2) of
+                                 (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a <= b))
+                                 (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a <= b))
+                                 _                                        -> Just (StrVal "Type Error")
+                               "==" -> case (var1, var2) of
+                                 (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a == b))
+                                 (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a == b))
+                                 _                                        -> Just (StrVal "Type Error")
+                               "/=" -> case (var1, var2) of
+                                 (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a /= b))
+                                 (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a /= b))
+                                 _                                        -> Just (StrVal "Type Error")
+                               _ -> Just (StrVal "Invalid Symbol")
 
 
 digitToInt :: Char -> Value
@@ -266,7 +299,10 @@ pExpr = do string "abs"
                     ||| do char '-'
                            e <- pExpr
                            return (Subtract t e)
-                          ||| return t
+                          ||| do boolOp <- boolComparator
+                                 e <- pExpr
+                                 return (Compare boolOp t e)
+                                ||| return t
 
 -- pFactor :: Parser Expr
 -- pFactor = do d <- digit
