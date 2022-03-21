@@ -314,6 +314,10 @@ pFactor = do f <- float
                                          e <- pExpr
                                          char ')'
                                          return e
+                                         ||| do string "False"
+                                                return (Val (BoolVal False))
+                                                ||| do string "True"
+                                                       return (Val (BoolVal True))
 
 
 pTerm :: Parser Expr
