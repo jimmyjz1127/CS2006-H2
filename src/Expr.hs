@@ -173,8 +173,9 @@ eval vars (Swap x) = do
 eval vars (ToString x) = do
                             let var1 = eval vars x
                             case (var1) of
-                                 Just (IntVal val1)  -> Just (StrVal (show val1))
-                                 Just (FloatVal val1)-> Just (StrVal (show val1))
+                                 Just (IntVal val1)   -> Just (StrVal (show val1))
+                                 Just (FloatVal val1) -> Just (StrVal (show val1))
+                                 _                    -> Just (StrVal ("Type Error"))
 
 eval vars (ToInt x) = do
                             let var1 = eval vars x
@@ -186,7 +187,7 @@ eval vars (ToFloat x) = do
                             let var1 = eval vars x
                             case (var1) of
                                  Just (StrVal val1)  -> Just (FloatVal (read val1 :: Float))
-                                 _                   -> Just (StrVal ("Type error"))                                 
+                                 _                   -> Just (StrVal ("Type error"))
 
 eval vars (Compare o x y) = do
                              let var1 = eval vars x
@@ -309,17 +310,7 @@ pExpr = do string "abs("
                                                                           e <- pExpr
                                                                           return (Compare o t e)
                                                                           ||| return t
-                                       
 
-
--- pFactor :: Parser Expr
--- pFactor = do d <- digit
---              return (Val (digitToInt d))
---            ||| do v <- letter
---                   return (Val (VarVal [v]))
---                        e <- pExpr
---                        char ')'
---                        return e
 
 pFactor :: Parser Expr
 pFactor = do f <- float
@@ -334,6 +325,10 @@ pFactor = do f <- float
                                          e <- pExpr
                                          char ')'
                                          return e
+                                         ||| do string "False"
+                                                return (Val (BoolVal False))
+                                                ||| do string "True"
+                                                       return (Val (BoolVal True))
 
 
 pTerm :: Parser Expr
