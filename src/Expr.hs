@@ -276,18 +276,18 @@ pExpr = do string "abs"
            e <- pExpr
            char ')'
            return (ABS e)
-        ||| do w1 <- pFactor
-               char '&'
-               w2 <- pFactor
-               return (Concat w1 w2)
-            ||| do t <- pTerm
-                   do char '+'
-                      e <- pExpr
-                      return (Add t e)
-                    ||| do char '-'
-                           e <- pExpr
-                           return (Subtract t e)
-                          ||| return t
+           ||| do w1 <- pFactor
+                  char '&'
+                  w2 <- pFactor
+                  return (Concat w1 w2)
+                  ||| do t <- pTerm
+                         do char '+'
+                            e <- pExpr
+                            return (Add t e)
+                            ||| do char '-'
+                                   e <- pExpr
+                                   return (Subtract t e)
+                                   ||| return t
 
 -- pFactor :: Parser Expr
 -- pFactor = do d <- digit
@@ -301,16 +301,16 @@ pExpr = do string "abs"
 pFactor :: Parser Expr
 pFactor = do d <- integer
              return (Val (IntVal d))
-           ||| do v <- identifier
-                  return (Val (VarVal v))
-                ||| do char '\"'
-                       e <- pExpr
-                       char '\"'
-                       return e
-                     ||| do char '('
-                            e <- pExpr
-                            char ')'
-                            return e
+             ||| do v <- identifier
+                    return (Val (VarVal v))
+                    ||| do char '\"'
+                           e <- pExpr
+                           char '\"'
+                           return e
+                           ||| do char '('
+                                  e <- pExpr
+                                  char ')'
+                                  return e
 
 pTerm :: Parser Expr
 pTerm = do f <- pFactor
