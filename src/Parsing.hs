@@ -51,23 +51,22 @@ Auxiliary functions
 -------------
 -}
 
+-- Takes a symbol and returns True if the symbol is printable
 isPrintable                   :: Char -> Bool
 isPrintable x                 = (&&) (isPrint x) (x /= '\"')
 
 isCondition                   :: Char -> Bool
 isCondition x                 = (&&) (isAlphaNum x) (isSymbol x)
 
-{-
-Takes a symbol and returns True if the symbol is of a boolean symbol used for boolean comparations
--}
+
+--Takes a symbol and returns True if the symbol is of a boolean symbol used for boolean comparations
 isBooleanSymbol             :: Char -> Bool
 isBooleanSymbol x           = do
                                    let arr = ["<", ">", "=", "/"]
                                    (has [x] arr)
 
-{-
-A contains function : takes a String element and a String list and returns True if the element is contained in the list
--}
+
+-- A contains function : takes a String element and a String list and returns True if the element is contained in the list
 has                      :: String -> [String] -> Bool
 has x arr                = length (filter (\a -> a == x) (arr)) > 0
 
@@ -169,6 +168,7 @@ boolComparator                =  do space
                                     space
                                     return operator
 
+--for recognizing string literals.  E.g. x = "Hello World"
 stringLit                     :: Parser String
 stringLit                     = do char '\"'
                                    word <- many printable
