@@ -104,6 +104,7 @@ sat                           :: (Char -> Bool) -> Parser Char
 sat p                         =  do x <- item
                                     if p x then return x else failure
 
+
 digit                         :: Parser Char
 digit                         =  sat isDigit
 
@@ -124,6 +125,7 @@ printable                     =  sat isPrintable
 
 char                          :: Char -> Parser Char
 char x                        =  sat (== x)
+
 
 string                        :: String -> Parser String
 string []                     =  return []
@@ -154,9 +156,22 @@ int                           =  do char '-'
                                     return (-n)
                                   ||| nat
 
+flt                           :: Parser Float
+flt                           =  do char '-'
+                                    n <- nat
+                                    char '.'
+                                    m <- nat
+                                    return (read ("-" ++ (show n) ++"."++ (show m))  :: Float)
+                                    |||do n <- nat
+                                          char '.'
+                                          m <- nat
+                                          return (read ((show n) ++"."++ (show m))  :: Float)
+
+
 space                         :: Parser ()
 space                         =  do many (sat isSpace)
                                     return ()
+
 
 
 boolSymbol                    :: Parser Char
@@ -209,6 +224,9 @@ natural                       =  token nat
 
 integer                       :: Parser Int
 integer                       =  token int
+
+float                         :: Parser Float
+float                         =  token flt
 
 symbol                        :: String -> Parser String
 symbol xs                     =  token (string xs)

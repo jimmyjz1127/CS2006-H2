@@ -55,11 +55,13 @@ process st (Print e) =
             Just (IntVal val)  -> putStrLn(show val)
             Just (StrVal val)  -> putStrLn(val)
             Just (CharVal val) -> putStrLn(show val)
+            Just (FloatVal val)-> putStrLn(show val)
             Just (BoolVal val) -> putStrLn(show val)
             Just (VarVal var)  -> case (getValue var st) of
                  (IntVal val)  -> putStrLn(show val)
                  (CharVal val) -> putStrLn(show val)
                  (StrVal val)  -> putStrLn(val)
+                 (FloatVal val)-> putStrLn(show val)
                  (BoolVal val) -> putStrLn(show val)
             Nothing -> putStrLn("")
       repl st
@@ -72,6 +74,19 @@ process st (Read e) = do case (eval (vars st) e) of
                                                       replf st content
                               _                 -> do putStrLn ("Error")
                                                       repl st
+process st (IfThen c a) = do
+                             let var = eval (vars st) c
+
+                             case var of
+                               Just (BoolVal x) -> do
+                                                     case x of
+                                                       True -> process st (head a)
+                                                       False -> do
+                                                                  case (length a) of
+                                                                    2 -> process st (last a)
+                                                                    _ -> repl st
+                               _                -> putStrLn("Invalid Condition")
+
 
 --------------------------------------------------------------------------------
 processf :: LState -> Command  -> [String] -> IO ()
@@ -89,11 +104,15 @@ processf st (Print e) inp =
             Just (IntVal val)  -> putStrLn(show val)
             Just (StrVal val)  -> putStrLn(val)
             Just (CharVal val) -> putStrLn(show val)
+            Just (FloatVal val)-> putStrLn(show val)
             Just (VarVal var)  -> case (getValue var st) of
                  (IntVal val)  -> putStrLn(show val)
                  (CharVal val) -> putStrLn(show val)
+                 (FloatVal val)-> putStrLn(show val)
                  (StrVal val)  -> putStrLn(val)
+                 _             -> putStrLn("Error")
             Nothing -> putStrLn("")
+            _                  -> putStrLn("Error")
       replf st inp
 
 processf st (Quit) inp = putStrLn("Quitting Program...")
@@ -119,7 +138,7 @@ repl st = do putStr ("> ")
 replf :: LState -> [String] -> IO ()
 replf st inp = do if (length inp) /= 0
                      then do
-                            putStrLn("Line: " ++ (head inp)) --Remove
+                            putStrLn("\nFile: " ++ (head inp)) --Optional
                             case parse pCommand (head inp) of
                                  [(cmd, "")] -> do processf st cmd (tail inp)
                                  _ -> do putStrLn "Parse error"
