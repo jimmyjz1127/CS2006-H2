@@ -77,7 +77,7 @@ process st (Quit) = putStrLn("Quitting Program...")
 process st (Read e) = do case (eval (vars st) e) of
                               Just (StrVal val) -> do check <- try (readFile val) :: IO (Either SomeException String)
                                                       case check of
-                                                           Left err   -> do putStrLn("File error")
+                                                           Left err   -> do putStrLn((show err) ++ "\n")
                                                                             repl st
                                                            Right pass -> do file <- readFile val
                                                                             let content = lines file

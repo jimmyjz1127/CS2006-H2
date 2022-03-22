@@ -197,26 +197,32 @@ eval vars (Compare o x y) = do
                              case o of
                                ">" -> case (var1, var2) of
                                  (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a > b))
+                                 (Just (FloatVal a), Just (FloatVal b)) -> Just (BoolVal (a > b))
                                  (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a > b))
                                  _                                        -> Just (StrVal "Type Error")
                                "<" -> case (var1, var2) of
                                  (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a < b))
+                                 (Just (FloatVal a), Just (FloatVal b)) -> Just (BoolVal (a < b))
                                  (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a < b))
                                  _                                        -> Just (StrVal "Type Error")
                                ">=" -> case (var1, var2) of
                                  (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a >= b))
+                                 (Just (FloatVal a), Just (FloatVal b)) -> Just (BoolVal (a >= b))
                                  (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a >= b))
                                  _                                        -> Just (StrVal "Type Error")
                                "<=" -> case (var1, var2) of
                                  (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a <= b))
+                                 (Just (FloatVal a), Just (FloatVal b)) -> Just (BoolVal (a <= b))
                                  (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a <= b))
                                  _                                        -> Just (StrVal "Type Error")
                                "==" -> case (var1, var2) of
                                  (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a == b))
+                                 (Just (FloatVal a), Just (FloatVal b)) -> Just (BoolVal (a == b))
                                  (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a == b))
                                  _                                        -> Just (StrVal "Type Error")
                                "/=" -> case (var1, var2) of
                                  (Just (IntVal a), Just (IntVal b)) -> Just (BoolVal (a /= b))
+                                 (Just (FloatVal a), Just (FloatVal b)) -> Just (BoolVal (a /= b))
                                  (Just (StrVal a), Just (StrVal b)) -> Just (BoolVal (a /= b))
                                  _                                        -> Just (StrVal "Type Error")
                                _ -> Just (StrVal "Invalid Symbol")
