@@ -31,16 +31,6 @@ contains :: Name ->  LState -> Bool
 contains name st = (length (filter (\a -> fst(a) == name ) (vars st))) /= 0
 
 
--- getValue :: String ->  LState -> Value
--- getValue name st = do if (contains name st)
---                         then do
---                                 check <- try (filter (\a -> fst(a) == name ) (vars st) ) :: IO (Either SomeException IO([Name, Value]) )
---                                 case check of
---                                      Left err   -> do putStrLn("Variable error")
---                                                       repl st
---                                      Right pass -> snd(head(filter (\a -> fst(a) == name ) (vars st) ))                 
---                       else (StrVal)("Value not found")
-
 getValue :: String ->  LState -> Value
 getValue name st = do if (contains name st)
                         then snd(head(filter (\a -> fst(a) == name ) (vars st)))
