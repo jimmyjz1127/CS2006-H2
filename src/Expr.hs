@@ -45,7 +45,9 @@ data Value = IntVal Int | StrVal String | CharVal Char | VarVal Name | BoolVal B
 
 
 getValueEx :: String ->  [(Name, Value)] -> Value
-getValueEx name vars = snd(head(filter (\a -> fst(a) == name ) (vars)))
+getValueEx name vars = do if ((length (filter (\a -> fst(a) == name ) (vars))) /= 0)
+                             then snd(head(filter (\a -> fst(a) == name ) (vars)))
+                          else (IntVal)(0)
 
 
 

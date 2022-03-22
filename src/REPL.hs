@@ -3,6 +3,7 @@ module REPL where
 import Expr
 import Parsing
 import System.IO
+import Control.Exception
 
 data LState = LState { vars :: [(Name, Value)] }
 
@@ -27,12 +28,24 @@ updateVars name value st = do
 
 
 contains :: Name ->  LState -> Bool
-contains name st = (length (filter (\a -> fst(a) == name ) (vars st))) > 0
+contains name st = (length (filter (\a -> fst(a) == name ) (vars st))) /= 0
+
+
+-- getValue :: String ->  LState -> Value
+-- getValue name st = do if (contains name st)
+--                         then do
+--                                 check <- try (filter (\a -> fst(a) == name ) (vars st) ) :: IO (Either SomeException IO([Name, Value]) )
+--                                 case check of
+--                                      Left err   -> do putStrLn("Variable error")
+--                                                       repl st
+--                                      Right pass -> snd(head(filter (\a -> fst(a) == name ) (vars st) ))                 
+--                       else (StrVal)("Value not found")
 
 getValue :: String ->  LState -> Value
 getValue name st = do if (contains name st)
                         then snd(head(filter (\a -> fst(a) == name ) (vars st)))
                       else (StrVal)("Value not found")
+
 -- Return a new set of variables with the given name removed
 dropVar :: Name -> LState -> LState
 dropVar name st = do
@@ -72,9 +85,13 @@ process st (Quit) = putStrLn("Quitting Program...")
 
 
 process st (Read e) = do case (eval (vars st) e) of
-                              Just (StrVal val) -> do file <- readFile val
-                                                      let content = lines file
-                                                      replf st content
+                              Just (StrVal val) -> do check <- try (readFile val) :: IO (Either SomeException String)
+                                                      case check of
+                                                           Left err   -> do putStrLn("File error")
+                                                                            repl st
+                                                           Right pass -> do file <- readFile val
+                                                                            let content = lines file
+                                                                            replf st content
                               _                 -> do putStrLn ("Error")
                                                       repl st
 process st (IfThen c a) = do
