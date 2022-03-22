@@ -3,7 +3,6 @@ module REPL where
 import Expr
 import Parsing
 import System.IO
-import Control.Exception
 
 data LState = LState { vars :: [(Name, Value)] }
 
@@ -31,7 +30,7 @@ contains :: Name ->  LState -> Bool
 contains name st = (length (filter (\a -> fst(a) == name ) (vars st))) > 0
 
 getValue :: String ->  LState -> Value
-getValue name st = do if contains name st
+getValue name st = do if (contains name st)
                         then snd(head(filter (\a -> fst(a) == name ) (vars st)))
                       else (StrVal)("Value not found")
 -- Return a new set of variables with the given name removed
