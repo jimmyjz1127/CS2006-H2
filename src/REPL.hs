@@ -135,6 +135,19 @@ processf st (Print e) inp =
             _                  -> putStrLn("Error")
       replf st inp
 
+processf st (IfThen c a) inp =  do
+                                let var = eval (vars st) c
+
+                                case var of
+                                  Just (BoolVal x) -> do
+                                                        case x of
+                                                          True -> processf st (head a) inp
+                                                          False -> do
+                                                                      case (length a) of
+                                                                        2 -> process st (last a)
+                                                                        _ -> replf st inp
+                                  _                -> putStrLn("Invalid Condition")
+
 processf st (Quit) inp = putStrLn("Quitting Program...")
 --------------------------------------------------------------------------------
 
