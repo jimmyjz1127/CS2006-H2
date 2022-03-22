@@ -44,3 +44,4 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - CS2006-H2
+    - QuickCheck
