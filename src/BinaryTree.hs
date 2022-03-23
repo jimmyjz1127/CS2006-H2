@@ -43,9 +43,10 @@ data Value = IntVal Int | StrVal String | CharVal Char | VarVal Name | BoolVal B
 BinaryTree implementation below -----------------------------------------------------------------------
 -}
 
+-- Tree Node data type
 data Node = Node { label :: Name,  -- name of the variable
                    value :: Value, -- the value of the variable
-                   ntype  :: String, -- node or null
+                   ntype  :: String, -- node (nonempty : has label & value for a variable) or null (empty treenode : does not have a label & value defined)
                    right :: Node,  -- right child node
                    left  :: Node } -- left child node
 
