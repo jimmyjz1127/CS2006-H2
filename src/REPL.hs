@@ -69,6 +69,18 @@ process st (Read e) = do case (eval (vars st) e) of
                                                                             replf st content
                               _                 -> do putStrLn ("Error")
                                                       repl st
+
+process st (Write e f) = do case (eval (vars st) e, eval (vars st) f) of
+                                 (Just (StrVal val1), Just (StrVal val2)) -> do check <- try (appendFile val1 (""++val2)) :: IO (Either SomeException () )
+                                                                                case check of
+                                                                                     Left err   -> do putStrLn("write error \n")
+                                                                                                      repl st
+                                                                                     Right pass -> repl st
+                                 _                                        -> do putStrLn ("Error")
+                                                                                repl st
+
+
+
 process st (IfThen c a) = do
                              let var = eval (vars st) c
 

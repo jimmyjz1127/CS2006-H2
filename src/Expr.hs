@@ -206,6 +206,12 @@ pCommand = do t <- ident
                                  space
                                  e <- pExpr
                                  return(Read e)
+                                 ||| do string "write"
+                                        space
+                                        e <- pExpr
+                                        space
+                                        f <- pExpr
+                                        return (Write e f)
                                 ||| do string "if" -- for if-then-else construct
                                        space
                                        char '('

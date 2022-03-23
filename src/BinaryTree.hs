@@ -29,6 +29,7 @@ data Expr = Add Expr Expr
 data Command = Set Name Expr -- assign an expression to a variable name
              | Print Expr    -- evaluate an expression and print the result
              | Read Expr
+             | Write Expr Expr
              | Quit
              | IfThen Expr [Command]
   deriving Show
