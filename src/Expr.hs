@@ -243,8 +243,10 @@ pExpr = do string "abs("
            char ')'
            return (ABS e)
         ||| do w1 <- pFactor
+               space
                char '+'
                char '+'
+               space
                w2 <- pFactor
                return (Concat w1 w2)
                ||| do string "cirA("
