@@ -55,7 +55,7 @@ process st (Print e) =
                  (BoolVal val) -> putStrLn(show val)
             Nothing -> putStrLn("")
       repl st
-      
+
 process st (Quit) = putStrLn("Quitting Program...")
 
 
@@ -151,4 +151,5 @@ replf st inp = do if (length inp) /= 0
                             case parse pCommand (head inp) of
                                  [(cmd, "")] -> do processf st cmd (tail inp)
                                  _ -> do putStrLn "Parse error"
+                                         replf st (tail inp)
                   else repl st
