@@ -1,8 +1,46 @@
-module BinaryTree where
+module BinaryTree  where
 
-import Expr
-import Parsing
+{-
+some data type definitions (originally in Expr.hs) -------------------------------------------------
+-}
+type Name = String
 
+-- At first, 'Expr' contains only addition, conversion to strings, and integer
+-- values. You will need to add other operations, and variables
+data Expr = Add Expr Expr
+          | Subtract Expr Expr
+          | Mul Expr Expr
+          | Div Expr Expr
+          | ToString Expr
+          | ToInt Expr
+          | ToFloat Expr
+          | Concat Expr Expr
+          | Pow Expr Expr
+          | Mod Expr Expr
+          | ABS Expr
+          | CirA Expr
+          | Swap Expr
+          | Val Value
+          | Compare String Expr Expr
+
+  deriving Show
+
+-- These are the REPL commands
+data Command = Set Name Expr -- assign an expression to a variable name
+             | Print Expr    -- evaluate an expression and print the result
+             | Read Expr
+             | Quit
+             | IfThen Expr [Command]
+  deriving Show
+
+
+data Value = IntVal Int | StrVal String | CharVal Char | VarVal Name | BoolVal Bool | FloatVal Float
+  deriving Show
+
+
+{-
+BinaryTree implementation below -----------------------------------------------------------------------
+-}
 
 data Node = Node { label :: Name,  -- name of the variable
                    value :: Value, -- the value of the variable
@@ -30,31 +68,14 @@ addValue current name newvalue             = do
                                                                       current {value = newvalue}
 
 -- given a (tree) node and variable name, getValue returns the corresponding value, or undefined String if the variable name cannot be found in the (tree) node
-getValue :: Node -> Name -> Value
-getValue current name                     = do
+getVal :: Node -> Name -> Value
+getVal current name                       = do
                                               case (ntype current) of
                                                 "node"    ->  do
                                                                 if (name > (label current))
-                                                                  then getValue (right current) name
+                                                                  then getVal (right current) name
                                                                 else if (name < (label current))
-                                                                  then getValue (left current) name
+                                                                  then getVal (left current) name
                                                                 else
                                                                   (value current)
                                                 _          -> StrVal "undefined"
-
-
-addNode :: Node -> Node -> Node
-addNode current new =                       do
-                                              case (ntype current) of
-                                                "node"    -> do
-                                                               if ((label new) > (label current))
-                                                                 then do
-                                                                        current {right = (addNode (right current) new)}
-                                                               else if ((label new) < (label current))
-                                                                 then do
-                                                                        current {left = (addNode (left current) new)}
-                                                               else do
-                                                                      let currentright = right current
-                                                                      let currentleft = left current
-                                                                      new {right = currentright, left = currentleft}
-                                                "null"    -> new

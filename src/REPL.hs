@@ -9,36 +9,22 @@ data LState = LState { vars :: Node }
 
 
 initLState :: LState
-initLState = LState []
+--initialize LState with BinaryTree with root node with name/label "0"
+initLState = LState (Node "0" undefined "node" (Node undefined undefined "null" undefined undefined) (Node undefined undefined "null" undefined undefined))
 
 -- Given a variable name and a value, return a new set of variables with
 -- that name and value added.
 -- If it already exists, remove the old value
+
 updateVars :: Name -> Value -> LState -> LState
-updateVars name value st = do
-                              if (contains name st)
-                                   then do
-                                        let tempState = dropVar name st
-                                        let currentList = (vars tempState) ++ [(name, value)]
-                                        tempState {vars = currentList}
-                              else do
-                                        let currentList = vars st
-                                        st {vars = currentList ++ [(name, value)]}
+updateVars name val st = do
+                          let tree = vars st
+                          let newtree = addValue tree name val
+                          st {vars = newtree}
 
 
-
-contains :: Name ->  LState -> Bool
-contains name st = length (filter (\a -> fst(a) == name ) (vars st)) > 0
-
-getValue :: String ->  LState -> Value
-getValue name st = do if contains name st
-                        then snd(head(filter (\a -> fst(a) == name ) (vars st)))
-                      else (StrVal)("Value not found")
--- Return a new set of variables with the given name removed
-dropVar :: Name -> LState -> LState
-dropVar name st = do
-                    let tempList = (filter (\a -> fst(a) /= name) (vars st))
-                    st{vars = tempList}
+getValue :: String -> LState -> Value
+getValue name st = getVal (vars st) name
 
 
 
