@@ -2,9 +2,10 @@ module REPL where
 
 import Expr
 import Parsing
+import BinaryTree
 import System.IO
 
-data LState = LState { vars :: [(Name, Value)] }
+data LState = LState { vars :: Node }
 
 
 initLState :: LState
