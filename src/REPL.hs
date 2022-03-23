@@ -4,6 +4,8 @@ import Expr
 import Parsing
 import System.IO
 import Control.Exception
+import Control.Concurrent
+
 
 data LState = LState { vars :: [(Name, Value)] }
 
@@ -138,7 +140,8 @@ processf st (IfThen c a) inp =  do
                                                                         _ -> replf st inp
                                   _                -> putStrLn("Invalid Condition")
 
-processf st (Quit) inp = putStrLn("Quitting Program...")
+processf st (Quit) inp = do putStrLn("Quitting Program...")
+                            threadDelay 5000000
 --------------------------------------------------------------------------------
 
 
