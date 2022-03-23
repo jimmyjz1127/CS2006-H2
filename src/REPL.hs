@@ -59,21 +59,23 @@ process st (Print e) =
 process st (Quit) = putStrLn("Quitting Program...")
 
 
+--Read content from a text file  line by line and execute
 process st (Read e) = do case (eval (vars st) e) of
                               Just (StrVal val) -> do check <- try (readFile val) :: IO (Either SomeException String)
                                                       case check of
-                                                           Left err   -> do putStrLn((show err) ++ "\n")
+                                                           Left err   -> do putStrLn((show err) ++ "\n")  --Error, mainly because of file not exist
                                                                             repl st
-                                                           Right pass -> do file <- readFile val
+                                                           Right pass -> do file <- readFile val          --If pass
                                                                             let content = lines file
                                                                             replf st content
                               _                 -> do putStrLn ("Error")
                                                       repl st
 
+--Read file path and string, append string to the end of the file
 process st (Write e f) = do case (eval (vars st) e, eval (vars st) f) of
-                                 (Just (StrVal val1), Just (StrVal val2)) -> do check <- try (appendFile val1 (""++val2)) :: IO (Either SomeException () )
+                                 (Just (StrVal val1), Just (StrVal val2)) -> do check <- try (appendFile val1 (""++val2)) :: IO (Either SomeException () ) --Try to write content to file
                                                                                 case check of
-                                                                                     Left err   -> do putStrLn("write error \n")
+                                                                                     Left err   -> do putStrLn("write error \n")  --If error thrown
                                                                                                       repl st
                                                                                      Right pass -> repl st
                                  _                                        -> do putStrLn ("Error")
@@ -95,6 +97,8 @@ process st (IfThen c a) = do
                                _                -> putStrLn("Invalid Condition")
 
 
+--Seperate operation for commands read from file
+--It returns to replf instead of repl
 --------------------------------------------------------------------------------
 processf :: LState -> Command  -> [String] -> IO ()
 processf st (Set name e)inp =
@@ -156,6 +160,12 @@ repl st = do putStr ("> ")
                           repl st
 
 
+
+--Similar operation to repl
+--It takes in an extra argument which is the line read from the text file
+--Similar to repl , it calls 'process' to process the command
+-- 'process' will call 'replf' when done
+--It loops until the last line is read, then it will call 'repl'
 replf :: LState -> [String] -> IO ()
 replf st inp = do if (length inp) /= 0
                      then do

@@ -25,6 +25,7 @@ eval vars (Concat x y) = do
                                  ((Just (StrVal a)),(Just (StrVal b))) -> Just (StrVal (a++b))
                                  _                                     -> Just (StrVal "Type Error")
 
+--Addition for Int, Float type
 eval vars (Add x y) = do
                         let var1 = eval vars x
                         let var2 = eval vars y
@@ -35,6 +36,7 @@ eval vars (Add x y) = do
                              (Just (FloatVal a), Just (FloatVal b))   -> Just (FloatVal ( a +  b))
                              _                                        -> Just (StrVal "Type Error")
 
+--Subtraction for Int, Float type
 eval vars (Subtract x y) = do
                              let var1 = eval vars x
                              let var2 = eval vars y
@@ -46,6 +48,7 @@ eval vars (Subtract x y) = do
                                   (Just (FloatVal a), Just (FloatVal b))   -> Just (FloatVal ( a -  b))
                                   _                                  -> Just (StrVal "Type Error")
 
+--Multiply for Int, Float type
 eval vars (Mul x y) = do
                         let var1 = eval vars x
                         let var2 = eval vars y
@@ -57,6 +60,7 @@ eval vars (Mul x y) = do
                              (Just (FloatVal a), Just (FloatVal b))   -> Just (FloatVal ( a *  b))
                              _                                  -> Just (StrVal "Type Error")
 
+--Division for Int, Float type
 eval vars (Div x y) = do
                         let var1 = eval vars x
                         let var2 = eval vars y
@@ -80,6 +84,7 @@ eval vars (Div x y) = do
 
                              _                                  -> Just (StrVal "Type Error")
 
+--Method for finding remainders when dividing
 eval vars (Mod x y) = do
                         let var1 = eval vars x
                         let var2 = eval vars y
@@ -91,7 +96,7 @@ eval vars (Mod x y) = do
                              _                                 -> Just (StrVal ("Type error"))
 
 
-
+--Method to return the result of a^b 
 eval vars (Pow x y) = do
                         let var1 = eval vars x
                         let var2 = eval vars y
@@ -103,6 +108,7 @@ eval vars (Pow x y) = do
                              (Just (FloatVal a), Just (FloatVal b)) -> Just (FloatVal (a**b))
                              _                                  -> Just (StrVal "Type Error")
 
+--Returns the absolute value of a given number
 eval vars (ABS x) = do
                         let var1 = eval vars x
                         case var1 of
@@ -114,6 +120,7 @@ eval vars (ABS x) = do
                                                         else Just(FloatVal val1)
                              _            -> Just (StrVal "Type Error")
 
+--Method to calculate the area of a circle with a given radius
 eval vars (CirA x) = do
                         let var1 = eval vars x
                         case var1 of
@@ -121,6 +128,7 @@ eval vars (CirA x) = do
                              Just (FloatVal val1) -> Just (FloatVal ((pi * (val1**2))) )
                              _            -> Just (StrVal "Type Error")
 
+--Converts Int to Float type and vice versa
 eval vars (Swap x) = do
                         let var1 = eval vars x
                         case var1 of
@@ -129,6 +137,7 @@ eval vars (Swap x) = do
                              _            -> Just (StrVal "Type Error")
 
 
+--Converts number types to String 
 eval vars (ToString x) = do
                             let var1 = eval vars x
                             case (var1) of
@@ -136,12 +145,14 @@ eval vars (ToString x) = do
                                  Just (FloatVal val1) -> Just (StrVal (show val1))
                                  _                    -> Just (StrVal ("Type Error"))
 
+--Converts a string to Int if valid
 eval vars (ToInt x) = do
                             let var1 = eval vars x
                             case (var1) of
                                  Just (StrVal val1)  -> Just (IntVal  (round (read val1)))
                                  _                   -> Just (StrVal ("Type error"))
 
+--Converts a string to Float if valid
 eval vars (ToFloat x) = do
                             let var1 = eval vars x
                             case (var1) of
