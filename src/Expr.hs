@@ -1,57 +1,14 @@
 module Expr where
 
 import Parsing
+import BinaryTree
 
 
-
-type Name = String
-
--- At first, 'Expr' contains only addition, conversion to strings, and integer
--- values. You will need to add other operations, and variables
-data Expr = Add Expr Expr
-          | Subtract Expr Expr
-          | Mul Expr Expr
-          | Div Expr Expr
-          | ToString Expr
-          | ToInt Expr
-          | ToFloat Expr
-          | Concat Expr Expr
-          | Pow Expr Expr
-          | Mod Expr Expr
-          | ABS Expr
-          | CirA Expr
-          | Swap Expr
-          | Val Value
-          | Compare String Expr Expr
-
-  deriving Show
-
--- These are the REPL commands
-data Command = Set Name Expr -- assign an expression to a variable name
-             | Print Expr    -- evaluate an expression and print the result
-             | Read Expr
-             | Quit
-             | IfThen Expr [Command]
-  deriving Show
+getValueEx :: String ->  Node -> Value
+getValueEx name vars = getVal vars name
 
 
-data Value = IntVal Int | StrVal String | CharVal Char | VarVal Name | BoolVal Bool | FloatVal Float
-  deriving Show
-
-
--- setVar :: Name -> Expr -> Command
--- setVar name value = Set name value
-
-
-
-getValueEx :: String ->  [(Name, Value)] -> Value
-getValueEx name vars = do if ((length (filter (\a -> fst(a) == name ) (vars))) /= 0)
-                             then snd(head(filter (\a -> fst(a) == name ) (vars)))
-                          else (IntVal)(0)
-
-
-
-eval :: [(Name, Value)] -> -- Variable name to value mapping
+eval :: Node -> -- Variable name to value mapping
         Expr -> -- Expression to evaluate
         Maybe Value -- Result (if no errors such as missing variables)
 eval vars (Val x) = do
