@@ -17,6 +17,7 @@ eval vars (Val x) = do
                         _            -> Just x
 
 
+-- For concatenating strings
 eval vars (Concat x y) = do
                             let var1 = eval vars x
                             let var2 = eval vars y
@@ -159,6 +160,7 @@ eval vars (ToFloat x) = do
                                  Just (StrVal val1)  -> Just (FloatVal (read val1 :: Float))
                                  _                   -> Just (StrVal ("Type error"))
 
+-- for boolean expressions involving operators : >, <, <=, >=, ==, /=
 eval vars (Compare o x y) = do
                              let var1 = eval vars x
                              let var2 = eval vars y
@@ -200,133 +202,135 @@ eval vars (Compare o x y) = do
 digitToInt :: Char -> Value
 digitToInt x = IntVal (fromEnum x - fromEnum '0')
 
+-- for parsing commands : Set, Print, Quit, Read, Write, if-then-else clauses
 pCommand :: Parser Command
-pCommand = do t <- ident
+pCommand = do t <- ident -- Set command
               space
               char '='
               space
               e <- pExpr
               return (Set t e)
-            ||| do string "print"
+            ||| do string "print" -- Print Command
                    space
                    e <- pExpr
                    return (Print e)
-                   ||| do string "quit"
+                   ||| do string "quit" -- Quit command
                           return (Quit)
-                          ||| do string "read"
+                          ||| do string "read" -- reading from files command
                                  space
                                  e <- pExpr
                                  return(Read e)
-                                 ||| do string "write"
+                                 ||| do string "write" -- Writing to files command
                                         space
                                         e <- pExpr
                                         space
                                         f <- pExpr
                                         return (Write e f)
-                                ||| do string "if" -- for if-then-else construct
-                                       space
-                                       char '('
-                                       condition <- pExpr
-                                       char ')'
-                                       space
-                                       string "then"
-                                       space
-                                       char '('
-                                       action1 <- pCommand
-                                       char ')'
-                                       space
-                                       string "else"
-                                       space
-                                       char '('
-                                       action2 <- pCommand
-                                       char ')'
-                                       return (IfThen condition [action1, action2])
-                                       ||| do string "if" -- for if-then construct
-                                              space
-                                              char '('
-                                              condition <- pExpr
-                                              char ')'
-                                              space
-                                              string "then"
-                                              space
-                                              char '('
-                                              action1 <- pCommand
-                                              char ')'
-                                              return (IfThen condition [action1])
+                                        ||| do string "if" -- for if-then-else construct
+                                               space
+                                               char '('
+                                               condition <- pExpr
+                                               char ')'
+                                               space
+                                               string "then"
+                                               space
+                                               char '('
+                                               action1 <- pCommand
+                                               char ')'
+                                               space
+                                               string "else"
+                                               space
+                                               char '('
+                                               action2 <- pCommand
+                                               char ')'
+                                               return (IfThen condition [action1, action2])
+                                               ||| do string "if" -- for if-then construct
+                                                      space
+                                                      char '('
+                                                      condition <- pExpr
+                                                      char ')'
+                                                      space
+                                                      string "then"
+                                                      space
+                                                      char '('
+                                                      action1 <- pCommand
+                                                      char ')'
+                                                      return (IfThen condition [action1])
 
+-- for paring expressions
 pExpr :: Parser Expr
-pExpr = do string "abs("
+pExpr = do string "abs(" -- for absolute value expressions
            e <- pExpr
            char ')'
            return (ABS e)
-        ||| do w1 <- pFactor
+        ||| do w1 <- pFactor -- for string concatenation expressions
                space
                char '+'
                char '+'
                space
                w2 <- pFactor
                return (Concat w1 w2)
-               ||| do string "cirA("
+               ||| do string "cirA(" -- for calculating area of circle expressions
                       r <- pExpr
                       char ')'
                       return (CirA r)
-                      ||| do string "swap("
+                      ||| do string "swap(" -- for converting ints to floats and vice versa
                              t <- pExpr
                              char ')'
                              return (Swap t)
-                             ||| do string "toString"
+                             ||| do string "toString" -- for toString expressions
                                     e <- pFactor
                                     return (ToString e)
-                                    ||| do string "toInt"
+                                    ||| do string "toInt" -- for toInt expressions
                                            e <- pFactor
                                            return (ToInt e)
-                                           ||| do string "toFloat"
+                                           ||| do string "toFloat" -- for toFloat expressions
                                                   e <- pFactor
                                                   return (ToFloat e)
-                                                  ||| do t <- pTerm  --a function b
+                                                  ||| do t <- pTerm  -- for numerical addition expressions
                                                          do char '+'
                                                             e <- pExpr
                                                             return (Add t e)
-                                                            ||| do char '-'
+                                                            ||| do char '-' -- for numerical subtraction expressions
                                                                    e <- pExpr
                                                                    return (Subtract t e)
-                                                                   ||| do o <- boolComparator
+                                                                   ||| do o <- boolComparator -- for comparing values : (<,>,<=,>=,==,/=)
                                                                           e <- pExpr
                                                                           return (Compare o t e)
                                                                           ||| return t
 
-
+-- for parsing factors in terms and expressions
 pFactor :: Parser Expr
-pFactor = do f <- float
+pFactor = do f <- float -- for float values
              return (Val (FloatVal f))
-             ||| do d <- integer
+             ||| do d <- integer -- for integer values
                     return (Val (IntVal d))
-                    ||| do v <- identifier
+                    ||| do v <- identifier -- for variable identifiers
                            return (Val (VarVal v))
-                           ||| do w <- stringLit
+                           ||| do w <- stringLit -- for string literals
                                   return (Val (StrVal w))
-                                  ||| do char '('
+                                  ||| do char '(' -- for expressions wrapped in parenthesis
                                          e <- pExpr
                                          char ')'
                                          return e
-                                         ||| do string "False"
+                                         ||| do string "False" -- for boolean value False
                                                 return (Val (BoolVal False))
-                                                ||| do string "True"
+                                                ||| do string "True" -- for boolean value True
                                                        return (Val (BoolVal True))
 
-
+-- for parsing terms in expressions
 pTerm :: Parser Expr
-pTerm = do f <- pFactor
+pTerm = do f <- pFactor -- for multiplicative terms
            do char '*'
               t <- pTerm
               return (Mul f t)
-            ||| do char '/'
+            ||| do char '/' -- for division terms
                    t <- pTerm
                    return (Div f t)
-                   ||| do char '^'
+                   ||| do char '^' -- for exponential terms
                           t <- pTerm
                           return (Pow f t)
-                          ||| do char '%'
+                          ||| do char '%' -- for modulus terms
                                  t <- pTerm
                                  return (Mod f t)
                           ||| return f

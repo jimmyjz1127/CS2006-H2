@@ -55,9 +55,6 @@ Auxiliary functions
 isPrintable                   :: Char -> Bool
 isPrintable x                 = (&&) (isPrint x) (x /= '\"')
 
-isCondition                   :: Char -> Bool
-isCondition x                 = (&&) (isAlphaNum x) (isSymbol x)
-
 
 --Takes a symbol and returns True if the symbol is of a boolean symbol used for boolean comparations
 isBooleanSymbol             :: Char -> Bool
@@ -173,10 +170,11 @@ space                         =  do many (sat isSpace)
                                     return ()
 
 
-
+-- for recognizing valid boolean operator symbols : {<,>,=,/}
 boolSymbol                    :: Parser Char
 boolSymbol                    = sat isBooleanSymbol
 
+-- for recognizing boolean comparison expression. E.g x > 1, 2 > 3, y > z
 boolComparator                :: Parser String
 boolComparator                =  do space
                                     operator <- many1 boolSymbol
@@ -190,20 +188,6 @@ stringLit                     = do char '\"'
                                    char '\"'
                                    return word
 
-condition                     :: Parser Char
-condition                     =  sat isCondition
-
-ifclause                      :: Parser String
-ifclause                      = do char 'i'
-                                   char 'f'
-                                   space
-                                   char '('
-                                   p <- many condition
-                                   char ')'
-                                   return p
-
--- thenclause                    :: Parser String
--- thenclause                    =  do char 't'
 
 {-
 Ignoring spacing

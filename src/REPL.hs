@@ -18,7 +18,6 @@ initLState = LState (Node "0" undefined "node" (Node undefined undefined "null" 
 -- Given a variable name and a value, return a new set of variables with
 -- that name and value added.
 -- If it already exists, remove the old value
-
 updateVars :: Name -> Value -> LState -> LState
 updateVars name val st = do
                           let tree = vars st
@@ -26,19 +25,24 @@ updateVars name val st = do
                           st {vars = newtree}
 
 
+-- Given the name of a variable, either returns the corresponding Value or "undefined" if the variable has not been previously defined
 getValue :: String -> LState -> Value
 getValue name st = getVal (vars st) name
 
 
 
 
-
+-- for processing commands given by user
 process :: LState -> Command -> IO ()
+
+-- for processing Set command
 process st (Set name e) =
   case (eval (vars st) e) of
     Just (VarVal val) -> repl (updateVars name (getValue val st) st)
     Just val -> repl (updateVars name val st)
     Nothing  -> repl st
+
+-- for processing Print command
 process st (Print e) =
     do
       case (eval (vars st) e) of
@@ -56,6 +60,7 @@ process st (Print e) =
             Nothing -> putStrLn("")
       repl st
 
+-- for processing the Quit command
 process st (Quit) = putStrLn("Quitting Program...")
 
 
@@ -71,7 +76,8 @@ process st (Read e) = do case (eval (vars st) e) of
                               _                 -> do putStrLn ("Error")
                                                       repl st
 
---Read file path and string, append string to the end of the file
+--Read file path and string
+--Append string to the end of the file
 process st (Write e f) = do case (eval (vars st) e, eval (vars st) f) of
                                  (Just (StrVal val1), Just (StrVal val2)) -> do check <- try (appendFile val1 (""++val2)) :: IO (Either SomeException () ) --Try to write content to file
                                                                                 case check of
@@ -82,7 +88,7 @@ process st (Write e f) = do case (eval (vars st) e, eval (vars st) f) of
                                                                                 repl st
 
 
-
+-- for processing if-then-else clause commands
 process st (IfThen c a) = do
                              let var = eval (vars st) c
 
