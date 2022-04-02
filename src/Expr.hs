@@ -3,7 +3,7 @@ module Expr where
 import Parsing
 import BinaryTree
 
-
+-- returns the value for a given variable name
 getValueEx :: String ->  Node -> Value
 getValueEx name vars = getVal vars name
 
