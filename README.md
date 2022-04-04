@@ -9,7 +9,7 @@ Files:
          - Main.hs : main loop which gets built together with the other game files by cabal
 
     test: contains Spec.hs file
-    
+
          - Spec.hs : Arbitrary Genereator, and test cases implemented in QuickCheck
 
 
@@ -23,15 +23,15 @@ Files:
 
     write        : write "<path/filename>" "<input>"
 
-    if-then      : if(<condition>) then (<conditional statement>)
+    if-then      : if (<condition>) then (<conditional statement>)
 
-    if-then-else : if(<consition>) then (<conditional statement1>) else (<conditional statement2>)
+    if-then-else : if(<condition>) then (<action 1>) else (<action 2>)
 
     quit         : quit
 
 
    Expressions    Use in our scripting language
-   
+
     add          : <variable/numercial value> + <variable/numercial value>
 
     substract    : <variable/numercial value> - <variable/numercial value>
@@ -44,7 +44,7 @@ Files:
 
     ABS          : abs(<variable/numercial value>)
 
-    power        : <variable/numercial value> ^ <variable/numercial value>
+    power        : <variable/numercial value> ^ (<variable/numercial value>)
 
     circle Area  : cirA(<variable/numercial value>)
 
