@@ -1,10 +1,15 @@
 # CS2006-H2
 
 Files:
+
     src:  contains all haskell .hs files, compile files, and executables
+
     app:  contains main loop
+
          - Main.hs : main loop which gets built together with the other game files by cabal
+
     test: contains Spec.hs file
+    
          - Spec.hs : Arbitrary Genereator, and test cases implemented in QuickCheck
 
 
