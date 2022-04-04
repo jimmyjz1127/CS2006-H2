@@ -13,8 +13,6 @@ Files:
          - Spec.hs : Arbitrary Genereator, and test cases implemented in QuickCheck
 
 
-Commands and Expressions in our scripting language:
-
    Commands       Use in our scripting language
 
     set          : <variable> = <value>
