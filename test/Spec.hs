@@ -28,6 +28,8 @@ instance Arbitrary Value where
 emptytree = Node undefined undefined undefined undefined undefined
 
 -------------------------------------Testing Basic Atomic Arithemtic Operations --------------------------
+
+-- Tests basic addition between two atomic values
 prop_simpleAdd :: Value -> Value -> Bool
 prop_simpleAdd a b = do
                        case (a,b) of
@@ -47,6 +49,7 @@ prop_simpleAdd a b = do
                                                (Just (FloatVal x), FloatVal y) -> (x==y)
                                                (Just (StrVal x), StrVal y) -> (x==y)
 
+-- Tests basic subtraction between two atomic values
 prop_simpleSubtract :: Value -> Value -> Bool
 prop_simpleSubtract a b = do
                             case (a,b) of
@@ -66,6 +69,7 @@ prop_simpleSubtract a b = do
                                                    (Just (FloatVal x), FloatVal y) -> (x==y)
                                                    (Just (StrVal x), StrVal y) -> (x==y)
 
+-- tests basic multiplication between two atomic values
 prop_simpleMultiply :: Value -> Value -> Bool
 prop_simpleMultiply a b = do
                             case (a,b) of
@@ -85,6 +89,7 @@ prop_simpleMultiply a b = do
                                                    (Just (FloatVal x), FloatVal y) -> (x==y)
                                                    (Just (StrVal x), StrVal y) -> (x==y)
 
+-- tests basic division between two atomic values
 prop_simpleDivide :: Value -> Value -> Bool
 prop_simpleDivide a b = do
                           case (a,b) of
@@ -108,6 +113,7 @@ prop_simpleDivide a b = do
                                                    (Just (FloatVal x), FloatVal y) -> (x==y)
                                                    (Just (StrVal x), StrVal y) -> (x==y)
 
+-- tests modulus operator on two atomic values
 prop_simpleMod :: Value -> Value -> Bool
 prop_simpleMod a b = do
                           case (a,b) of
@@ -125,6 +131,7 @@ prop_simpleMod a b = do
                                                    (Just (FloatVal x), FloatVal y) -> (x==y)
                                                    (Just (StrVal x), StrVal y)     -> (x==y)
 
+-- tests power function of two atomic values
 prop_simplePower :: Value -> Value -> Bool
 prop_simplePower a b = do
                          case (a,b) of
@@ -143,6 +150,7 @@ prop_simplePower a b = do
                                                 (Just (FloatVal x), FloatVal y) -> (x==y)
                                                 (Just (StrVal x), StrVal y)     -> (x==y)
 
+-- tests area of a circle function given two atomic values
 prop_simplecirA :: Value -> Bool
 prop_simplecirA a = do
                       case (a) of
@@ -159,6 +167,7 @@ prop_simplecirA a = do
                                                    (Just (FloatVal x), FloatVal y) -> (x==y)
                                                    (Just (StrVal x), StrVal y) -> (x==y)
 
+-- run the tests
 main :: IO ()
 main = do
          quickCheck prop_simpleAdd
