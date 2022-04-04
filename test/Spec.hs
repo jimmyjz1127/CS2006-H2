@@ -38,7 +38,7 @@ prop_simpleAdd a b = do
                                            let result2 = case (a,b) of
                                                              (IntVal x, IntVal y)     -> IntVal (x+y)
                                                              (FloatVal x, FloatVal y) -> FloatVal (x+y)
-                                                             (IntVal x, FloatVal y)   -> FloatVal (fromIntegral(x) + y)
+                                                             (IntVal x, FloatVal y)   -> FloatVal (fromIntegral(x)+y)
                                                              (FloatVal x, IntVal y)   -> FloatVal (x + fromIntegral(y))
                                                              _                        -> StrVal "Type Error"
                                            do
@@ -46,6 +46,7 @@ prop_simpleAdd a b = do
                                                (Just (IntVal x), IntVal y) -> (x==y)
                                                (Just (FloatVal x), FloatVal y) -> (x==y)
                                                (Just (StrVal x), StrVal y) -> (x==y)
+
 
 prop_simpleSubtract :: Value -> Value -> Bool 
 prop_simpleSubtract a b = do 
@@ -167,5 +168,4 @@ main = do
          quickCheck prop_simpleDivide
          quickCheck prop_simpleMod
          quickCheck prop_simplecirA
-
 
