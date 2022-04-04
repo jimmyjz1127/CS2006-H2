@@ -93,20 +93,37 @@ prop_simpleDivide a b = do
                               _             -> do
                                                 let result1 = eval emptytree (Div (Val a) (Val b))
                                                 let result2 = case (a,b) of
-                                                                 (IntVal x, IntVal y)     -> FloatVal (fromIntegral(x)/fromIntegral(y))
-                                                                 (FloatVal x, FloatVal y) -> FloatVal (x/y)
-                                                                 (IntVal x, FloatVal y)   -> FloatVal (fromIntegral(x) / y)
-                                                                 (FloatVal x, IntVal y)   -> FloatVal (x / fromIntegral(y))
                                                                  (IntVal x, IntVal 0)            -> StrVal "Div by 0 error"
                                                                  (FloatVal x, IntVal 0)          -> StrVal "Div by 0 error"
                                                                  (IntVal x, FloatVal 0.0)        -> StrVal "Div by 0 error"
                                                                  (FloatVal x, FloatVal 0.0)      -> StrVal "Div by 0 error"
+                                                                 (IntVal x, IntVal y)            -> IntVal (x`div`y)
+                                                                 (FloatVal x, FloatVal y)        -> FloatVal (x/y)
+                                                                 (IntVal x, FloatVal y)          -> FloatVal (fromIntegral(x) / y)
+                                                                 (FloatVal x, IntVal y)          -> FloatVal (x / fromIntegral(y))
                                                                  _                               -> StrVal "Type Error"   
                                                 do 
                                                  case (result1, result2) of
                                                    (Just (IntVal x), IntVal y) -> (x==y)
                                                    (Just (FloatVal x), FloatVal y) -> (x==y)
                                                    (Just (StrVal x), StrVal y) -> (x==y)
+
+prop_simpleMod :: Value -> Value -> Bool 
+prop_simpleMod a b = do
+                          case (a,b) of
+                              (VarVal i, _) -> True 
+                              (_, VarVal i) -> True 
+                              _             -> do
+                                                let result1 = eval emptytree (Mod (Val a) (Val b))
+                                                let result2 = case (a,b) of
+                                                                 (IntVal x, IntVal 0)            -> StrVal "Div by 0 error"
+                                                                 (IntVal x, IntVal y)            -> IntVal (x- x`div`y)
+                                                                 _                               -> StrVal "Type error"   
+                                                do 
+                                                 case (result1, result2) of
+                                                   (Just (IntVal x), IntVal y) -> (x==y)
+                                                   (Just (FloatVal x), FloatVal y) -> (x==y)
+                                                   (Just (StrVal x), StrVal y) -> (x==y)                                                  
 
 prop_simplecirA :: Value -> Bool 
 prop_simplecirA a = do 
@@ -129,7 +146,8 @@ main = do
          quickCheck prop_simpleAdd
          quickCheck prop_simpleSubtract
          quickCheck prop_simpleMultiply
-         quickCheck (verbose prop_simpleDivide)
+         quickCheck prop_simpleDivide
+         quickCheck prop_simpleMod
          quickCheck prop_simplecirA
 
 
