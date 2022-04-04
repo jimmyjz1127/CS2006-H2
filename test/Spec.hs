@@ -117,14 +117,32 @@ prop_simpleMod a b = do
                                                 let result1 = eval emptytree (Mod (Val a) (Val b))
                                                 let result2 = case (a,b) of
                                                                  (IntVal x, IntVal 0)            -> StrVal "Div by 0 error"
-                                                                 (IntVal x, IntVal y)            -> IntVal (x- x`div`y)
+                                                                 (IntVal x, IntVal y)            -> IntVal (x`mod`y)
                                                                  _                               -> StrVal "Type error"   
                                                 do 
                                                  case (result1, result2) of
                                                    (Just (IntVal x), IntVal y) -> (x==y)
                                                    (Just (FloatVal x), FloatVal y) -> (x==y)
                                                    (Just (StrVal x), StrVal y) -> (x==y)                                                  
-
+{-
+prop_simplePower :: Value -> Value -> Bool
+prop_simplePower a b = do
+                            case(a,b)of
+                              (VarVal i, _) -> True 
+                              (_, VarVal i) -> True 
+                              _             -> do 
+                                                let result1 = eval emptytree (Pow (Val a) (Val b))
+                                                let result2 = case (a,b) of
+                                                                 (IntVal x, IntVal y)            -> IntVal (x^y)
+                                                                 (FloatVal x, FloatVal y)        -> FloatVal (x^y)
+                                                                 (IntVal x, FloatVal y)          -> FloatVal (fromIntegral(x) ^ y)
+                                                                 (FloatVal x, IntVal y)          -> FloatVal (x ^ fromIntegral(y))
+                                               do   
+                                                case (result1, result2) of
+                                                  (Just (IntVal x), IntVal y) -> (x==y)
+                                                  (Just (FloatVal x), FloatVal y) -> (x==y)
+                                                  (Just (StrVal x), StrVal y) -> (x==y)  
+-}
 prop_simplecirA :: Value -> Bool 
 prop_simplecirA a = do 
                       case (a) of
