@@ -33,8 +33,8 @@ emptytree = Node undefined undefined undefined undefined undefined
 prop_simpleAdd :: Value -> Value -> Bool
 prop_simpleAdd a b = do
                        case (a,b) of
-                         (VarVal i, _) -> True
-                         (_, VarVal i) -> True
+                         (VarVal i, _) -> True --ignore var val since we aren't dealing with Lstate
+                         (_, VarVal i) -> True --ignore var val since we aren't dealing with Lstate
                          _             -> do
                                            let result1 = eval emptytree (Add (Val a) (Val b))
                                            let result2 = case (a,b) of
@@ -53,8 +53,8 @@ prop_simpleAdd a b = do
 prop_simpleSubtract :: Value -> Value -> Bool
 prop_simpleSubtract a b = do
                             case (a,b) of
-                              (VarVal i, _) -> True
-                              (_, VarVal i) -> True
+                              (VarVal i, _) -> True --ignore var val since we aren't dealing with Lstate
+                              (_, VarVal i) -> True --ignore var val since we aren't dealing with Lstate
                               _             -> do
                                                 let result1 = eval emptytree (Subtract (Val a) (Val b))
                                                 let result2 = case (a,b) of
@@ -73,8 +73,8 @@ prop_simpleSubtract a b = do
 prop_simpleMultiply :: Value -> Value -> Bool
 prop_simpleMultiply a b = do
                             case (a,b) of
-                              (VarVal i, _) -> True
-                              (_, VarVal i) -> True
+                              (VarVal i, _) -> True --ignore var val since we aren't dealing with Lstate
+                              (_, VarVal i) -> True --ignore var val since we aren't dealing with Lstate
                               _             -> do
                                                 let result1 = eval emptytree (Mul (Val a) (Val b))
                                                 let result2 = case (a,b) of
@@ -93,8 +93,8 @@ prop_simpleMultiply a b = do
 prop_simpleDivide :: Value -> Value -> Bool
 prop_simpleDivide a b = do
                           case (a,b) of
-                              (VarVal i, _) -> True
-                              (_, VarVal i) -> True
+                              (VarVal i, _) -> True --ignore var val since we aren't dealing with Lstate
+                              (_, VarVal i) -> True --ignore var val since we aren't dealing with Lstate
                               _             -> do
                                                 let result1 = eval emptytree (Div (Val a) (Val b))
                                                 let result2 = case (a,b) of
@@ -117,8 +117,8 @@ prop_simpleDivide a b = do
 prop_simpleMod :: Value -> Value -> Bool
 prop_simpleMod a b = do
                           case (a,b) of
-                              (VarVal i, _) -> True
-                              (_, VarVal i) -> True
+                              (VarVal i, _) -> True --ignore var val since we aren't dealing with Lstate
+                              (_, VarVal i) -> True --ignore var val since we aren't dealing with Lstate
                               _             -> do
                                                 let result1 = eval emptytree (Mod (Val a) (Val b))
                                                 let result2 = case (a,b) of
@@ -135,8 +135,8 @@ prop_simpleMod a b = do
 prop_simplePower :: Value -> Value -> Bool
 prop_simplePower a b = do
                          case (a,b) of
-                           (VarVal i, _) -> True
-                           (_, VarVal i) -> True
+                           (VarVal i, _) -> True --ignore var val since we aren't dealing with Lstate
+                           (_, VarVal i) -> True --ignore var val since we aren't dealing with Lstate
                            _             -> do
                                               let result1 = eval emptytree (Pow (Val a) (Val b))
                                               let result2 = case (a,b) of
@@ -154,7 +154,7 @@ prop_simplePower a b = do
 prop_simplecirA :: Value -> Bool
 prop_simplecirA a = do
                       case (a) of
-                        (VarVal i) -> True
+                        (VarVal i) -> True --ignore var val since we aren't dealing with Lstate
                         _          -> do
                                        let result1 = eval emptytree (CirA (Val a))
                                        let result2 = case (a) of
