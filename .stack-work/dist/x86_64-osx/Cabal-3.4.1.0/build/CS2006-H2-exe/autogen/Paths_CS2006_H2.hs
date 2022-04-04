@@ -31,7 +31,7 @@ version = Version [0,1,0,0] []
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
 
 bindir     = "/Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/.stack-work/install/x86_64-osx/ba5f5ccb4ba602eabcf275b43fb2a6728a213e076030915b3cebc03cae996626/9.0.2/bin"
-libdir     = "/Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/.stack-work/install/x86_64-osx/ba5f5ccb4ba602eabcf275b43fb2a6728a213e076030915b3cebc03cae996626/9.0.2/lib/x86_64-osx-ghc-9.0.2/CS2006-H2-0.1.0.0-7pogj35R83rFzDCBOrCp1t-CS2006-H2-exe"
+libdir     = "/Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/.stack-work/install/x86_64-osx/ba5f5ccb4ba602eabcf275b43fb2a6728a213e076030915b3cebc03cae996626/9.0.2/lib/x86_64-osx-ghc-9.0.2/CS2006-H2-0.1.0.0-CJijvIZdMFQERzDbLLpXK3-CS2006-H2-exe"
 dynlibdir  = "/Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/.stack-work/install/x86_64-osx/ba5f5ccb4ba602eabcf275b43fb2a6728a213e076030915b3cebc03cae996626/9.0.2/lib/x86_64-osx-ghc-9.0.2"
 datadir    = "/Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/.stack-work/install/x86_64-osx/ba5f5ccb4ba602eabcf275b43fb2a6728a213e076030915b3cebc03cae996626/9.0.2/share/x86_64-osx-ghc-9.0.2/CS2006-H2-0.1.0.0"
 libexecdir = "/Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/.stack-work/install/x86_64-osx/ba5f5ccb4ba602eabcf275b43fb2a6728a213e076030915b3cebc03cae996626/9.0.2/libexec/x86_64-osx-ghc-9.0.2/CS2006-H2-0.1.0.0"

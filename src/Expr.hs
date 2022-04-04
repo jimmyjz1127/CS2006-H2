@@ -8,6 +8,7 @@ getValueEx :: String ->  Node -> Value
 getValueEx name vars = getVal vars name
 
 
+
 eval :: Node -> -- Variable name to value mapping
         Expr -> -- Expression to evaluate
         Maybe Value -- Result (if no errors such as missing variables)
@@ -89,7 +90,7 @@ eval vars (Mod x y) = do
                              (Just (IntVal a), Just (IntVal b)) -> do if b /= 0
                                                                          then Just (IntVal (a `mod` b))
                                                                       else Just (StrVal ("Div by 0 error"))
-                             _                                 -> Just (StrVal ("Type error"))
+                             _                                 -> Just (StrVal ("Type Error"))
 
 
 
@@ -98,10 +99,10 @@ eval vars (Pow x y) = do
                         let var2 = eval vars y
 
                         case (var1, var2) of
-                             (Just (IntVal a), Just (IntVal b))     -> Just (IntVal (a^b))
-                             (Just (FloatVal a), Just (IntVal b))   -> Just (FloatVal (a^b))
-                             (Just (IntVal a), Just (FloatVal b))   -> Just (FloatVal (fromIntegral a**b))
-                             (Just (FloatVal a), Just (FloatVal b)) -> Just (FloatVal (a**b))
+                             (Just (IntVal a), Just (IntVal b))     -> Just (FloatVal ((fromIntegral a) ** (fromIntegral b)))
+                             (Just (FloatVal a), Just (IntVal b))   -> (Just (FloatVal (a**fromIntegral b)))
+                             (Just (IntVal a), Just (FloatVal b))   -> (Just (FloatVal (fromIntegral a**b)))
+                             (Just (FloatVal a), Just (FloatVal b)) -> (Just (FloatVal (a**b)))
                              _                                  -> Just (StrVal "Type Error")
 
 eval vars (ABS x) = do
@@ -141,13 +142,13 @@ eval vars (ToInt x) = do
                             let var1 = eval vars x
                             case (var1) of
                                  Just (StrVal val1)  -> Just (IntVal  (round (read val1)))
-                                 _                   -> Just (StrVal ("Type error"))
+                                 _                   -> Just (StrVal ("Type Error"))
 
 eval vars (ToFloat x) = do
                             let var1 = eval vars x
                             case (var1) of
                                  Just (StrVal val1)  -> Just (FloatVal (read val1 :: Float))
-                                 _                   -> Just (StrVal ("Type error"))
+                                 _                   -> Just (StrVal ("Type Error"))
 
 -- for boolean expressions involving operators : >, <, <=, >=, ==, /=
 eval vars (Compare o x y) = do
@@ -317,7 +318,9 @@ pTerm = do f <- pFactor -- for multiplicative terms
                    t <- pTerm
                    return (Div f t)
                    ||| do char '^' -- for exponential terms
+                          char '('
                           t <- pTerm
+                          char ')'
                           return (Pow f t)
                           ||| do char '%' -- for modulus terms
                                  t <- pTerm

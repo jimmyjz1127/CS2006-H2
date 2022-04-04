@@ -2,6 +2,7 @@ import Expr
 import REPL
 import BinaryTree
 import Test.QuickCheck
+import Data.Typeable
 
 
 instance Arbitrary Value where
@@ -26,6 +27,7 @@ instance Arbitrary Value where
                                 return (FloatVal f)
 
 emptytree = Node undefined undefined undefined undefined undefined
+
 
 -------------------------------------Testing Basic Atomic Arithemtic Operations --------------------------
 
@@ -124,7 +126,7 @@ prop_simpleMod a b = do
                                                 let result2 = case (a,b) of
                                                                  (IntVal x, IntVal 0)            -> StrVal "Div by 0 error"
                                                                  (IntVal x, IntVal y)            -> IntVal (x`mod`y)
-                                                                 _                               -> StrVal "Type error"
+                                                                 _                               -> StrVal "Type Error"
                                                 do
                                                  case (result1, result2) of
                                                    (Just (IntVal x), IntVal y)     -> (x==y)
@@ -140,15 +142,16 @@ prop_simplePower a b = do
                            _             -> do
                                               let result1 = eval emptytree (Pow (Val a) (Val b))
                                               let result2 = case (a,b) of
-                                                                (IntVal x, IntVal y)            -> IntVal (x^y)
+                                                                (IntVal x, IntVal y)            -> FloatVal (fromIntegral x ** fromIntegral y)
                                                                 (FloatVal x, FloatVal y)        -> FloatVal (x**y)
                                                                 (IntVal x, FloatVal y)          -> FloatVal (fromIntegral(x)**y)
                                                                 (FloatVal x, IntVal y)          -> FloatVal (x ** fromIntegral(y))
-                                                                _                               -> StrVal "Type error"
+                                                                _                               -> StrVal "Type Error"
                                               case (result1, result2) of
                                                 (Just (IntVal x), IntVal y)     -> (x==y)
                                                 (Just (FloatVal x), FloatVal y) -> (x==y)
                                                 (Just (StrVal x), StrVal y)     -> (x==y)
+                                                _                               -> True
 
 -- tests area of a circle function given two atomic values
 prop_simplecirA :: Value -> Bool
@@ -175,4 +178,5 @@ main = do
          quickCheck prop_simpleMultiply
          quickCheck prop_simpleDivide
          quickCheck prop_simpleMod
+         quickCheck prop_simplePower
          quickCheck prop_simplecirA
