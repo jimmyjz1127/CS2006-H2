@@ -11,6 +11,7 @@ Files:
 Commands and Expressions in our scripting language:
 
    Commands       Use in our scripting language
+
     set          : <variable> = <value>
 
     print        : print <variable/value type input>
@@ -27,6 +28,7 @@ Commands and Expressions in our scripting language:
 
 
    Expressions    Use in our scripting language
+   
     add          : <variable/numercial value> + <variable/numercial value>
 
     substract    : <variable/numercial value> - <variable/numercial value>
