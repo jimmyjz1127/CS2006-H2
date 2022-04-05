@@ -1,7 +1,7 @@
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/.stack-work/dist/x86_64-osx/Cabal-3.4.1.0/build/autogen/cabal_macros.h:
   hash: c0f32a7eae379cfa6a142e91b13ff8980a98eb21ff8d51ff7748ef589d8ec82c
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/CS2006-H2.cabal:
-  hash: 66325975d841939c86cf0ce86706290877a4749c88fd03f899b6be0aabe4e884
+  hash: f5e79d47cd7ccd45c21521b7e034300934fbb1928a0ba9ea6ac1c7b288ab26ce
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/src/Parsing.hs:
   hash: 9a744fdd6fccc6c9d9f9fd815d9c0066f705fa8f90b46c982624f8942c4efda5
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/src/BinaryTree.hs:
@@ -12,8 +12,6 @@
   hash: 3b6c0f16983344ce12525816947d892da98bc96f17a664531494f515b9356c81
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/src/REPL.hs:
   hash: 41eba960813ff0299bfb55ffc1651e93acf0fec051d3dd6fb47ee4dd0632403a
-/Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/src/Main.hs:
-  hash: 9019b891ad78be928e622ae14f6e265906e58d7ea3575954b58d0b981f5173cc
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/package.yaml:
   hash: ec9adcd2906cd84e5a4f0a2a9d6b4095f054154622e0be73d101d8d69331a1ef
 /Users/jimmyzhang/Documents/CS2006/Practicals/CS2006-H2/README.md:

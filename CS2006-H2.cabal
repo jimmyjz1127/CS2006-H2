@@ -25,7 +25,6 @@ library
   exposed-modules:
       BinaryTree
       Expr
-      Main
       Parsing
       REPL
   other-modules:
